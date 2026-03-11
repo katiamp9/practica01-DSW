@@ -17,12 +17,12 @@
   the iteration process.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
+**Language/Version**: [Java 17 (required)]  
+**Primary Dependencies**: [Spring Boot 3.x, Spring Security, springdoc-openapi, DB migration tool]  
+**Storage**: [PostgreSQL (required)]  
+**Testing**: [JUnit 5, Spring Boot Test, Testcontainers/compose integration as needed]  
+**Target Platform**: [Linux server with Docker support]
+**Project Type**: [backend web-service]  
 **Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
 **Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
 **Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
@@ -31,7 +31,14 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] Confirma compatibilidad Spring Boot 3.x + Java 17.
+- [ ] Define autenticación básica para endpoints protegidos y manejo seguro de credenciales.
+- [ ] Define PostgreSQL como persistencia principal con estrategia de migraciones.
+- [ ] Define ejecución local/integración con Docker (compose) reproducible.
+- [ ] Define versionamiento por prefijo de URL `/api/v{n}` (versión vigente: `/api/v1`).
+- [ ] Define actualización de contrato OpenAPI/Swagger para endpoints nuevos o modificados.
+- [ ] Para cada GET de colecciones, define `Pageable` obligatorio (`page`, `size`, `sort`).
+- [ ] Define evidencia mínima de calidad: pruebas y validación de build, incluyendo paginación/ordenamiento.
 
 ## Project Structure
 
@@ -56,17 +63,17 @@ specs/[###-feature]/
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+# [REMOVE IF UNUSED] Option 1: Spring Boot backend (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── main/
+│   ├── java/
+│   │   └── ...
+│   └── resources/
+└── test/
+  └── java/
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+docker/
+└── compose/
 
 # [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
 backend/

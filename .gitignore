@@ -1,0 +1,27 @@
+# Java / Spring
+target/
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+build/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+*.tmp
+*.swp
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Docker
+docker/volumes/

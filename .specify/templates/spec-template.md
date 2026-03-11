@@ -90,6 +90,19 @@
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
+### Constitution Alignment *(mandatory)*
+
+- **CA-001**: Feature MUST remain compatible with Spring Boot 3.x and Java 17.
+- **CA-002**: Feature MUST define Basic Auth impact (new protected/public endpoints,
+  roles/rules, credential handling).
+- **CA-003**: Feature MUST define PostgreSQL data impact and required migrations.
+- **CA-004**: Feature MUST define Docker impact for local/integration reproducibility.
+- **CA-005**: Feature MUST define OpenAPI/Swagger updates for API contract changes.
+- **CA-006**: Feature MUST define API route versioning with URL prefix `/api/v{n}`;
+  current baseline MUST be `/api/v1`.
+- **CA-007**: Every GET endpoint returning collections MUST support Spring Data JPA
+  `Pageable` parameters: `page`, `size`, and `sort`.
+
 *Example of marking unclear requirements:*
 
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]

@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: empleados
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/empleados}
+    username: ${SPRING_DATASOURCE_USERNAME:empleados_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:empleados_pass}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  flyway:
+    enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
