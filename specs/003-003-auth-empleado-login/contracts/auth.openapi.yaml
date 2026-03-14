@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  title: API Autenticación Empleados
+  version: 1.0.0
+  description: Contrato para autenticación de empleados por correo y contraseña.
+servers:
+  - url: http://localhost:8080
+security:
+  - basicAuth: []
+
+paths:
+  /api/v1/auth/login:
+    post:
+      summary: Iniciar sesión de empleado
+      operationId: loginEmpleado
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Autenticación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 3
+          maxLength: 254
+          example: empleado@example.com
+        password:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: password-seguro
+
+    LoginSuccessResponse:
+      type: object
+      required: [authenticated]
+      properties:
+        authenticated:
+          type: boolean
+          example: true
+
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: AUTH_INVALID_CREDENTIALS
+        message:
+          type: string
+          example: Invalid email or password
