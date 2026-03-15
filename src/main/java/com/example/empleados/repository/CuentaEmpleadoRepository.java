@@ -9,5 +9,7 @@ public interface CuentaEmpleadoRepository extends JpaRepository<CuentaEmpleado, 
 
     Optional<CuentaEmpleado> findByCorreoIgnoreCase(String correo);
 
+    Optional<CuentaEmpleado> findByEmpleadoClave(String empleadoClave);
+
     boolean existsByCorreoIgnoreCase(String correo);
 }

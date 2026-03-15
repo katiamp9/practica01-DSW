@@ -58,6 +58,43 @@ public class CredencialEmpleadoService {
         return credencialEmpleadoRepository.findByCuentaEmpleadoCorreoIgnoreCase(normalizeEmail(email));
     }
 
+    public void upsertAccessForEmpleado(String empleadoClave, String email, String plainPassword) {
+        String normalizedEmail = normalizeEmail(email);
+        boolean hasPassword = plainPassword != null && !plainPassword.trim().isEmpty();
+
+        CuentaEmpleado cuentaEmpleado = cuentaEmpleadoRepository.findByEmpleadoClave(empleadoClave)
+            .orElse(null);
+
+        Optional<CuentaEmpleado> cuentaPorCorreo = cuentaEmpleadoRepository.findByCorreoIgnoreCase(normalizedEmail);
+        if (cuentaPorCorreo.isPresent() && (cuentaEmpleado == null || !cuentaPorCorreo.get().getId().equals(cuentaEmpleado.getId()))) {
+            throw new ValidationException("Ya existe una cuenta para el correo: " + normalizedEmail);
+        }
+
+        if (cuentaEmpleado == null) {
+            if (!hasPassword) {
+                throw new ValidationException("password es obligatorio para activar acceso de un empleado sin cuenta");
+            }
+            createAccountWithCredential(normalizedEmail, empleadoClave, plainPassword);
+            return;
+        }
+
+        cuentaEmpleado.setCorreo(normalizedEmail);
+        CuentaEmpleado cuentaActualizada = cuentaEmpleadoRepository.save(cuentaEmpleado);
+
+        if (!hasPassword) {
+            return;
+        }
+
+        CredencialEmpleado credencial = credencialEmpleadoRepository.findByCuentaEmpleadoId(cuentaActualizada.getId())
+            .orElseGet(() -> {
+                CredencialEmpleado nuevaCredencial = new CredencialEmpleado();
+                nuevaCredencial.setCuentaEmpleado(cuentaActualizada);
+                return nuevaCredencial;
+            });
+        credencial.setPasswordHash(passwordEncoder.encode(plainPassword));
+        credencialEmpleadoRepository.save(credencial);
+    }
+
     private String normalizeEmail(String email) {
         return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }

@@ -21,23 +21,34 @@ public final class EmpleadoDtos {
         @Size(max = 100, message = "telefono debe tener máximo 100 caracteres")
         String telefono,
 
-        String clave
+        String clave,
+
+        String email,
+
+        String password
     ) {
+        public EmpleadoCreateRequest(String nombre, String direccion, String telefono, String clave) {
+            this(nombre, direccion, telefono, clave, null, null);
+        }
     }
 
     public record EmpleadoUpdateRequest(
-        @NotBlank(message = "nombre es obligatorio")
         @Size(max = 100, message = "nombre debe tener máximo 100 caracteres")
         String nombre,
 
-        @NotBlank(message = "direccion es obligatoria")
         @Size(max = 100, message = "direccion debe tener máximo 100 caracteres")
         String direccion,
 
-        @NotBlank(message = "telefono es obligatorio")
         @Size(max = 100, message = "telefono debe tener máximo 100 caracteres")
-        String telefono
+        String telefono,
+
+        String email,
+
+        String password
     ) {
+        public EmpleadoUpdateRequest(String nombre, String direccion, String telefono) {
+            this(nombre, direccion, telefono, null, null);
+        }
     }
 
     public record EmpleadoResponse(
