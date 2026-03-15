@@ -2,16 +2,16 @@
 
 **Feature Branch**: `003-003-auth-empleado-login`  
 **Created**: 2026-03-14  
-**Status**: Draft  
+**Status**: Implemented (Pending Release Gate)  
 **Input**: User description: "Funcionalidad 003: Autenticación de empleados mediante correo y contraseña"
 
 ## Clarifications
 
 ### Session 2026-03-14
 
-- Q: ¿La contraseña inicial se insertará como hash BCrypt de `${INITIAL_ADMIN_PASSWORD}` y se documentará en `.env.example`? → A: Sí, la migración V3 insertará credencial inicial con hash BCrypt de `${INITIAL_ADMIN_PASSWORD}` y el acceso inicial quedará documentado en `.env.example`.
+- Q: ¿La contraseña inicial se insertará como hash BCrypt de `${INITIAL_ADMIN_PASSWORD_HASH}` y se documentará en `.env.example`? → A: Sí, la migración V3 insertará credencial inicial con hash BCrypt de `${INITIAL_ADMIN_PASSWORD_HASH}` y el acceso inicial quedará documentado en `.env.example`.
 - Q: ¿La relación de `cuentas_empleado` será directa contra la columna `clave` de `empleados`? → A: Sí, `cuentas_empleado` referenciará directamente `empleados.clave` como identidad canónica (Clave Compuesta Lógica).
-- Q: ¿Cómo se desactiva el fallback `${INITIAL_ADMIN_PASSWORD}` sin romper Basic Auth constitucional? → A: Se elimina el fallback en código y Basic Auth seguirá activo usando credenciales provistas por variables de entorno/secretos.
+- Q: ¿Cómo se desactiva el fallback de contraseña en claro sin romper Basic Auth constitucional? → A: Se elimina el fallback en código y Basic Auth seguirá activo usando credenciales provistas por variables de entorno/secretos en formato hash BCrypt.
 - Q: ¿La cuenta inicial `admin@empresa.com` se crea solo en dev/test o en todos los entornos? → A: Se crea en todos los entornos; la contraseña inicial se gestiona por variables de entorno/secretos (sin credenciales en texto plano en repositorio).
 
 ## User Scenarios & Testing *(mandatory)*

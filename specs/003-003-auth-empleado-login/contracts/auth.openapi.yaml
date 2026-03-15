@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API Autenticación Empleados
-  version: 1.0.0
-  description: Contrato para autenticación de empleados por correo y contraseña.
+  version: 1.1.0
+  description: Contrato para autenticación de empleados por correo y contraseña con respuesta uniforme en fallos.
 servers:
   - url: http://localhost:8080
 security:
@@ -27,12 +27,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginSuccessResponse'
+              examples:
+                success:
+                  value:
+                    authenticated: true
         '401':
-          description: Credenciales inválidas
+          description: Credenciales inválidas (correo inexistente o contraseña incorrecta)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidCredentials:
+                  value:
+                    code: AUTH_INVALID_CREDENTIALS
+                    message: Invalid email or password
 
 components:
   securitySchemes:
@@ -50,12 +59,12 @@ components:
           format: email
           minLength: 3
           maxLength: 254
-          example: empleado@example.com
+          example: admin@empresa.com
         password:
           type: string
           minLength: 1
           maxLength: 200
-          example: password-seguro
+          example: admin123
 
     LoginSuccessResponse:
       type: object
