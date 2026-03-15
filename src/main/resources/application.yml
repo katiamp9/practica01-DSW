@@ -14,7 +14,8 @@ spring:
     open-in-view: false
   flyway:
     enabled: true
-
+    placeholders:
+      initial_admin_password_hash: ${INITIAL_ADMIN_PASSWORD_HASH:$2y$10$rDLkWjFUlUkWr9GIiK42OOLVqlFM1eBhAmDNxf4VTAQmV.p.JWO5i}
 server:
   port: ${SERVER_PORT:8080}
 
@@ -29,3 +30,8 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+
+auth:
+  user:
+    name: ${SPRING_SECURITY_USER_NAME:admin}
+    password-hash: ${SPRING_SECURITY_USER_PASSWORD_HASH:$2y$10$rDLkWjFUlUkWr9GIiK42OOLVqlFM1eBhAmDNxf4VTAQmV.p.JWO5i}
