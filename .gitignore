@@ -1,0 +1,19 @@
+# Compilados
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+/build/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Archivos de sistema y logs
+.DS_Store
+log/
+*.log
+
+# SECRETOS (Lo más importante)
+.env
+.env.local
+.env.*.local

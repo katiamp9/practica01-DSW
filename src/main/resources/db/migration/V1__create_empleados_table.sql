@@ -1,0 +1,14 @@
+CREATE SEQUENCE IF NOT EXISTS empleados_consecutivo_seq START WITH 1001 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS empleados (
+    clave VARCHAR(32) PRIMARY KEY,
+    prefijo VARCHAR(4) NOT NULL DEFAULT 'EMP-',
+    consecutivo BIGINT NOT NULL UNIQUE,
+    nombre VARCHAR(100) NOT NULL,
+    direccion VARCHAR(100) NOT NULL,
+    telefono VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_prefijo CHECK (prefijo = 'EMP-'),
+    CONSTRAINT chk_clave_formato CHECK (clave ~ '^EMP-[0-9]+$')
+);

@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: empleados
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/empleados}
+    username: ${SPRING_DATASOURCE_USERNAME:empleados_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:empleados_pass}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  flyway:
+    enabled: true
+    placeholders:
+      initial_admin_password_hash: ${INITIAL_ADMIN_PASSWORD_HASH:$2y$10$rDLkWjFUlUkWr9GIiK42OOLVqlFM1eBhAmDNxf4VTAQmV.p.JWO5i}
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+auth:
+  user:
+    name: ${SPRING_SECURITY_USER_NAME:admin}
+    password-hash: ${SPRING_SECURITY_USER_PASSWORD_HASH:$2y$10$rDLkWjFUlUkWr9GIiK42OOLVqlFM1eBhAmDNxf4VTAQmV.p.JWO5i}

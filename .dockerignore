@@ -1,0 +1,23 @@
+# VCS
+.git/
+
+# Build outputs
+target/
+build/
+
+# IDE and local settings
+.vscode/
+.idea/
+
+# Env and logs
+.env*
+*.log*
+
+# Docs/specs not needed in image
+specs/
+.specify/
+.github/
+
+# Docker files
+Dockerfile*
+.dockerignore
