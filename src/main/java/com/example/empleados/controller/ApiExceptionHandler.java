@@ -1,9 +1,11 @@
 package com.example.empleados.controller;
 
+import com.example.empleados.controller.dto.AuthDtos;
 import com.example.empleados.controller.dto.EmpleadoDtos;
 import com.example.empleados.service.ClaveCollisionException;
 import com.example.empleados.service.EmpleadoNotFoundException;
 import com.example.empleados.service.InvalidPaginationException;
+import com.example.empleados.service.InvalidCredentialsException;
 import com.example.empleados.service.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,5 +43,11 @@ public class ApiExceptionHandler {
     public ResponseEntity<EmpleadoDtos.ErrorResponse> handleInvalidPagination(Exception ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(new EmpleadoDtos.ErrorResponse("UNPROCESSABLE_ENTITY", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<AuthDtos.ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(new AuthDtos.ErrorResponse("AUTH_INVALID_CREDENTIALS", ex.getMessage()));
     }
 }

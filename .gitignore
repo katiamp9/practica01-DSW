@@ -1,27 +1,19 @@
-# Java / Spring
-target/
-*.class
-*.jar
-*.war
-*.ear
-.gradle/
-build/
+# Compilados
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+/build/
 
-# IDE / OS
-.vscode/
+# IDEs
 .idea/
+.vscode/
+*.iml
+
+# Archivos de sistema y logs
 .DS_Store
-Thumbs.db
-
-# Logs and temp
+log/
 *.log
-*.tmp
-*.swp
 
-# Env
+# SECRETOS (Lo más importante)
 .env
-.env.*
-!.env.example
-
-# Docker
-docker/volumes/
+.env.local
+.env.*.local

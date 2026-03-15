@@ -18,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -42,6 +43,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     ApiExceptionHandler.class
 })
 @Import(SecurityConfig.class)
+@TestPropertySource(properties = {
+    "SPRING_SECURITY_USER_NAME=admin",
+    "SPRING_SECURITY_USER_PASSWORD_HASH=$2y$10$rDLkWjFUlUkWr9GIiK42OOLVqlFM1eBhAmDNxf4VTAQmV.p.JWO5i"
+})
 class EmpleadoControllerIntegrationTest {
 
     @Autowired
