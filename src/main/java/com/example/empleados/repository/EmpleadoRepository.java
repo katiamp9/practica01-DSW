@@ -8,4 +8,6 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, String> {
 
     @Query(value = "SELECT nextval('empleados_consecutivo_seq')", nativeQuery = true)
     Long nextConsecutivo();
+
+    long countByDepartamentoId(Long departamentoId);
 }
