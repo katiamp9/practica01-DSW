@@ -73,6 +73,8 @@ Rationale: estabilidad continua y reducción de regresiones.
 - Observabilidad mínima MUST incluir logs estructurados y endpoint de salud operativo.
 - La documentación técnica MUST indicar cómo levantar PostgreSQL vía Docker y cómo
 	acceder a Swagger UI.
+- El frontend del proyecto MUST ubicarse en `/frontend-empleados` y nuevas piezas
+	MUST usar Angular Standalone Components, Signals y Control Flow nativo.
 - Las rutas de API MUST mantener prefijo versionado `/api/v{n}`; cambios de versión
 	MUST publicarse como nueva versión de ruta.
 - Los endpoints GET de colecciones MUST declarar y soportar `page`, `size` y `sort`
