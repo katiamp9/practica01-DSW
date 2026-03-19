@@ -46,6 +46,8 @@ public class EmpleadoUpdateService {
             empleado.setDepartamento(departamentoValidationService.requireDepartamento(request.departamentoId()));
         }
 
+        empleado.setRol(Roles.normalizeOrDefault(empleado.getRol()));
+
         boolean hasEmail = request.email() != null && !request.email().trim().isEmpty();
         boolean hasPassword = request.password() != null && !request.password().trim().isEmpty();
         if (hasEmail || hasPassword) {

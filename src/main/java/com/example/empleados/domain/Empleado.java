@@ -10,6 +10,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.FetchType;
 import java.time.LocalDateTime;
+import com.example.empleados.service.Roles;
 
 @Entity
 @Table(name = "empleados")
@@ -38,6 +39,9 @@ public class Empleado {
     @JoinColumn(name = "departamento_id", nullable = false)
     private Departamento departamento;
 
+    @Column(name = "rol", nullable = false, length = 50)
+    private String rol;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -47,12 +51,18 @@ public class Empleado {
     @PrePersist
     public void onCreate() {
         LocalDateTime now = LocalDateTime.now();
+        if (this.rol == null || this.rol.trim().isEmpty()) {
+            this.rol = Roles.ROLE_USER;
+        }
         this.createdAt = now;
         this.updatedAt = now;
     }
 
     @PreUpdate
     public void onUpdate() {
+        if (this.rol == null || this.rol.trim().isEmpty()) {
+            this.rol = Roles.ROLE_USER;
+        }
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -110,6 +120,14 @@ public class Empleado {
 
     public void setDepartamento(Departamento departamento) {
         this.departamento = departamento;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public LocalDateTime getCreatedAt() {
