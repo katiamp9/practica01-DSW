@@ -1,6 +1,7 @@
 package com.example.empleados.service;
 
 import com.example.empleados.controller.dto.EmpleadoDtos;
+import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,17 +15,20 @@ public class EmpleadoCreateService {
 
     private final EmpleadoRepository empleadoRepository;
     private final EmpleadoValidationService validationService;
+    private final DepartamentoValidationService departamentoValidationService;
     private final ClaveEmpleadoGenerator claveGenerator;
     private final CredencialEmpleadoService credencialEmpleadoService;
 
     public EmpleadoCreateService(
         EmpleadoRepository empleadoRepository,
         EmpleadoValidationService validationService,
+        DepartamentoValidationService departamentoValidationService,
         ClaveEmpleadoGenerator claveGenerator,
         CredencialEmpleadoService credencialEmpleadoService
     ) {
         this.empleadoRepository = empleadoRepository;
         this.validationService = validationService;
+        this.departamentoValidationService = departamentoValidationService;
         this.claveGenerator = claveGenerator;
         this.credencialEmpleadoService = credencialEmpleadoService;
     }
@@ -32,6 +36,7 @@ public class EmpleadoCreateService {
     @Transactional
     public Empleado create(EmpleadoDtos.EmpleadoCreateRequest request) {
         validationService.validateCreate(request);
+        Departamento departamento = departamentoValidationService.requireDepartamento(request.departamentoId());
 
         String lastGeneratedKey = null;
         for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -45,6 +50,7 @@ public class EmpleadoCreateService {
             empleado.setNombre(request.nombre().trim());
             empleado.setDireccion(request.direccion().trim());
             empleado.setTelefono(request.telefono().trim());
+            empleado.setDepartamento(departamento);
 
             try {
                 Empleado savedEmpleado = empleadoRepository.save(empleado);

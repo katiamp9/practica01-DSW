@@ -3,6 +3,8 @@ package com.example.empleados.controller;
 import com.example.empleados.controller.dto.AuthDtos;
 import com.example.empleados.controller.dto.EmpleadoDtos;
 import com.example.empleados.service.ClaveCollisionException;
+import com.example.empleados.service.DepartamentoInUseException;
+import com.example.empleados.service.DepartamentoNotFoundException;
 import com.example.empleados.service.EmpleadoNotFoundException;
 import com.example.empleados.service.InvalidPaginationException;
 import com.example.empleados.service.InvalidCredentialsException;
@@ -23,6 +25,12 @@ public class ApiExceptionHandler {
             .body(new EmpleadoDtos.ErrorResponse("NOT_FOUND", ex.getMessage()));
     }
 
+    @ExceptionHandler(DepartamentoNotFoundException.class)
+    public ResponseEntity<EmpleadoDtos.ErrorResponse> handleDepartamentoNotFound(DepartamentoNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new EmpleadoDtos.ErrorResponse("NOT_FOUND", ex.getMessage()));
+    }
+
     @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     public ResponseEntity<EmpleadoDtos.ErrorResponse> handleValidation(Exception ex) {
         String message = ex instanceof MethodArgumentNotValidException manv
@@ -35,6 +43,12 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(ClaveCollisionException.class)
     public ResponseEntity<EmpleadoDtos.ErrorResponse> handleCollision(ClaveCollisionException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(new EmpleadoDtos.ErrorResponse("CONFLICT", ex.getMessage()));
+    }
+
+    @ExceptionHandler(DepartamentoInUseException.class)
+    public ResponseEntity<EmpleadoDtos.ErrorResponse> handleDepartamentoInUse(DepartamentoInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(new EmpleadoDtos.ErrorResponse("CONFLICT", ex.getMessage()));
     }

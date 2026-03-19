@@ -13,7 +13,8 @@ final class EmpleadoMapper {
             empleado.getClave(),
             empleado.getNombre(),
             empleado.getDireccion(),
-            empleado.getTelefono()
+            empleado.getTelefono(),
+            empleado.getDepartamento() == null ? null : empleado.getDepartamento().getId()
         );
     }
 }

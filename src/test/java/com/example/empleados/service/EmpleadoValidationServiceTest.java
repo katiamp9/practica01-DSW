@@ -17,6 +17,7 @@ class EmpleadoValidationServiceTest {
             "Ana",
             "Calle 1",
             "555-0101",
+            1L,
             "EMP-9999"
         );
 
@@ -30,6 +31,7 @@ class EmpleadoValidationServiceTest {
             tooLong,
             "Calle 1",
             "555-0101",
+            1L,
             null
         );
 
@@ -107,6 +109,7 @@ class EmpleadoValidationServiceTest {
             "Ana",
             "Calle 1",
             "555-0101",
+            1L,
             null,
             "admin@empresa.com",
             null
@@ -122,11 +125,43 @@ class EmpleadoValidationServiceTest {
             "Ana",
             "Calle 1",
             "555-0101",
+            1L,
             null,
             "admin@empresa.com",
             "admin123"
         );
 
         assertDoesNotThrow(() -> validationService.validateCreate(request));
+    }
+
+    @Test
+    void validateCreate_shouldFailWhenDepartamentoIdIsMissing() {
+        EmpleadoDtos.EmpleadoCreateRequest request = new EmpleadoDtos.EmpleadoCreateRequest(
+            "Ana",
+            "Calle 1",
+            "555-0101",
+            null,
+            null,
+            null,
+            null
+        );
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> validationService.validateCreate(request));
+        assertEquals("departamentoId es obligatorio", exception.getMessage());
+    }
+
+    @Test
+    void validateUpdate_shouldFailWhenDepartamentoIdIsInvalid() {
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
+            "Ana",
+            "Calle 1",
+            "555-0101",
+            0L,
+            null,
+            null
+        );
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> validationService.validateUpdate(request));
+        assertEquals("departamentoId debe ser mayor a 0", exception.getMessage());
     }
 }
