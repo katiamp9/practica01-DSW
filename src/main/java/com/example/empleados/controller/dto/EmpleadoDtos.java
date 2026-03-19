@@ -82,7 +82,8 @@ public final class EmpleadoDtos {
         String nombre,
         String direccion,
         String telefono,
-        Long departamentoId
+        Long departamentoId,
+        String rol
     ) {
     }
 
