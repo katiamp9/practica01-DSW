@@ -2,6 +2,7 @@ package com.example.empleados.repository;
 
 import com.example.empleados.domain.CredencialEmpleado;
 import com.example.empleados.domain.CuentaEmpleado;
+import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
 import com.example.empleados.service.CredencialEmpleadoService;
 import com.example.empleados.service.ValidationException;
@@ -33,6 +34,9 @@ class CredencialEmpleadoRepositoryIntegrationTest {
     private EmpleadoRepository empleadoRepository;
 
     @Autowired
+    private DepartamentoRepository departamentoRepository;
+
+    @Autowired
     private CredencialEmpleadoService credencialEmpleadoService;
 
     @Autowired
@@ -40,6 +44,8 @@ class CredencialEmpleadoRepositoryIntegrationTest {
 
     @Test
     void shouldPersistPasswordAsHashAndNeverAsPlainText() {
+        Departamento departamento = departamento("Sistemas");
+
         Empleado empleado = new Empleado();
         empleado.setClave("EMP-2001");
         empleado.setPrefijo("EMP-");
@@ -47,6 +53,7 @@ class CredencialEmpleadoRepositoryIntegrationTest {
         empleado.setNombre("Ana");
         empleado.setDireccion("Calle 1");
         empleado.setTelefono("555-0001");
+        empleado.setDepartamento(departamento);
         empleadoRepository.save(empleado);
 
         String plainPassword = "plain-secret";
@@ -67,6 +74,8 @@ class CredencialEmpleadoRepositoryIntegrationTest {
 
     @Test
     void shouldRejectDuplicateEmailCaseInsensitiveWhenCreatingAccount() {
+        Departamento departamento = departamento("Sistemas");
+
         Empleado empleadoA = new Empleado();
         empleadoA.setClave("EMP-2002");
         empleadoA.setPrefijo("EMP-");
@@ -74,6 +83,7 @@ class CredencialEmpleadoRepositoryIntegrationTest {
         empleadoA.setNombre("Luis");
         empleadoA.setDireccion("Calle 2");
         empleadoA.setTelefono("555-0002");
+        empleadoA.setDepartamento(departamento);
         empleadoRepository.save(empleadoA);
 
         Empleado empleadoB = new Empleado();
@@ -83,6 +93,7 @@ class CredencialEmpleadoRepositoryIntegrationTest {
         empleadoB.setNombre("Maria");
         empleadoB.setDireccion("Calle 3");
         empleadoB.setTelefono("555-0003");
+        empleadoB.setDepartamento(departamento);
         empleadoRepository.save(empleadoB);
 
         credencialEmpleadoService.createAccountWithCredential("admin@empresa.com", "EMP-2002", "pass-1");
@@ -91,5 +102,11 @@ class CredencialEmpleadoRepositoryIntegrationTest {
             ValidationException.class,
             () -> credencialEmpleadoService.createAccountWithCredential("Admin@Empresa.com", "EMP-2003", "pass-2")
         );
+    }
+
+    private Departamento departamento(String nombre) {
+        Departamento departamento = new Departamento();
+        departamento.setNombre(nombre);
+        return departamentoRepository.save(departamento);
     }
 }

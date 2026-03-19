@@ -32,6 +32,13 @@ public class CredencialEmpleadoService {
     }
 
     public CuentaEmpleado createAccountWithCredential(String email, String empleadoClave, String plainPassword) {
+        boolean hasEmail = email != null && !email.trim().isEmpty();
+        boolean hasPassword = plainPassword != null && !plainPassword.trim().isEmpty();
+
+        if (hasEmail != hasPassword) {
+            throw new ValidationException("email y password deben enviarse juntos");
+        }
+
         String normalizedEmail = normalizeEmail(email);
         if (cuentaEmpleadoRepository.existsByCorreoIgnoreCase(normalizedEmail)) {
             throw new ValidationException("Ya existe una cuenta para el correo: " + normalizedEmail);
@@ -59,8 +66,13 @@ public class CredencialEmpleadoService {
     }
 
     public void upsertAccessForEmpleado(String empleadoClave, String email, String plainPassword) {
+        boolean hasEmail = email != null && !email.trim().isEmpty();
         String normalizedEmail = normalizeEmail(email);
         boolean hasPassword = plainPassword != null && !plainPassword.trim().isEmpty();
+
+        if (hasPassword && !hasEmail) {
+            throw new ValidationException("si envías password también debes enviar email");
+        }
 
         CuentaEmpleado cuentaEmpleado = cuentaEmpleadoRepository.findByEmpleadoClave(empleadoClave)
             .orElse(null);

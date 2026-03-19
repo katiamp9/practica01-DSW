@@ -1,0 +1,303 @@
+openapi: 3.0.3
+info:
+  title: API Departamentos y Empleados
+  version: 1.0.0
+  description: Contrato para CRUD de departamentos y relación obligatoria en empleados.
+servers:
+  - url: http://localhost:8080
+security:
+  - basicAuth: []
+
+paths:
+  /api/v1/departamentos:
+    get:
+      summary: Listar departamentos
+      operationId: listDepartamentos
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+          description: Índice de página (base 0)
+        - in: query
+          name: size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Tamaño de página
+        - in: query
+          name: sort
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              example: nombre,asc
+          style: form
+          explode: true
+          description: Ordenamiento por campo,direccion (id|nombre y asc|desc)
+      responses:
+        '200':
+          description: Lista paginada de departamentos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoPageResponse'
+        '422':
+          description: Parámetros de paginación/ordenamiento inválidos
+    post:
+      summary: Crear departamento
+      operationId: createDepartamento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartamentoRequest'
+      responses:
+        '201':
+          description: Departamento creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoResponse'
+        '400':
+          description: Datos inválidos
+
+  /api/v1/departamentos/{id}:
+    get:
+      summary: Obtener departamento por id
+      operationId: getDepartamentoById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Departamento encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoResponse'
+        '404':
+          description: No encontrado
+    put:
+      summary: Actualizar departamento
+      operationId: updateDepartamento
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartamentoRequest'
+      responses:
+        '200':
+          description: Departamento actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoResponse'
+        '400':
+          description: Datos inválidos
+        '404':
+          description: No encontrado
+    delete:
+      summary: Eliminar departamento
+      operationId: deleteDepartamento
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Eliminado
+        '404':
+          description: No encontrado
+        '409':
+          description: Departamento en uso por empleados
+
+  /api/v1/empleados:
+    post:
+      summary: Crear empleado
+      operationId: createEmpleado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoCreateRequest'
+      responses:
+        '201':
+          description: Empleado creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '400':
+          description: Validación de negocio
+
+  /api/v1/empleados/{clave}:
+    put:
+      summary: Actualizar empleado parcialmente
+      operationId: updateEmpleado
+      parameters:
+        - in: path
+          name: clave
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoUpdateRequest'
+      responses:
+        '200':
+          description: Empleado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '400':
+          description: Validación de negocio
+        '404':
+          description: Empleado no encontrado
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    DepartamentoRequest:
+      type: object
+      required: [nombre]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+          example: Sistemas
+
+    DepartamentoResponse:
+      type: object
+      required: [id, nombre]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: Sistemas
+
+    EmpleadoCreateRequest:
+      type: object
+      required: [nombre, direccion, telefono, departamentoId]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+        direccion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 100
+        departamentoId:
+          type: integer
+          format: int64
+          example: 1
+        email:
+          type: string
+          format: email
+          nullable: true
+        password:
+          type: string
+          nullable: true
+          description: Si se envía, también debe enviarse email
+
+    EmpleadoUpdateRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+          nullable: true
+        direccion:
+          type: string
+          maxLength: 100
+          nullable: true
+        telefono:
+          type: string
+          maxLength: 100
+          nullable: true
+        departamentoId:
+          type: integer
+          format: int64
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        password:
+          type: string
+          nullable: true
+          description: Si se envía, también debe enviarse email
+
+    EmpleadoResponse:
+      type: object
+      required: [clave, nombre, direccion, telefono, departamentoId]
+      properties:
+        clave:
+          type: string
+        nombre:
+          type: string
+        direccion:
+          type: string
+        telefono:
+          type: string
+        departamentoId:
+          type: integer
+          format: int64
+
+    DepartamentoPageResponse:
+      type: object
+      required: [content, number, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/DepartamentoResponse'
+        number:
+          type: integer
+          example: 0
+        size:
+          type: integer
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          example: 3
+        totalPages:
+          type: integer
+          example: 1

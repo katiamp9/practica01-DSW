@@ -10,6 +10,9 @@ public class EmpleadoValidationService {
         if (request.clave() != null && !request.clave().isBlank()) {
             throw new ValidationException("No se permite enviar clave manualmente");
         }
+        if (request.departamentoId() == null) {
+            throw new ValidationException("departamentoId es obligatorio");
+        }
         validateCommon(request.nombre(), request.direccion(), request.telefono());
         validateOptionalAccess(request.email(), request.password());
     }
@@ -18,6 +21,7 @@ public class EmpleadoValidationService {
         validateTextIfPresent("nombre", request.nombre());
         validateTextIfPresent("direccion", request.direccion());
         validateTextIfPresent("telefono", request.telefono());
+        validateDepartamentoIfPresent(request.departamentoId());
         validateOptionalAccessForUpdate(request.email(), request.password());
     }
 
@@ -87,6 +91,12 @@ public class EmpleadoValidationService {
         }
         if (value.length() > 100) {
             throw new ValidationException(field + " debe tener máximo 100 caracteres");
+        }
+    }
+
+    private void validateDepartamentoIfPresent(Long departamentoId) {
+        if (departamentoId != null && departamentoId < 1) {
+            throw new ValidationException("departamentoId debe ser mayor a 0");
         }
     }
 }

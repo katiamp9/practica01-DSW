@@ -1,6 +1,7 @@
 package com.example.empleados.service;
 
 import com.example.empleados.controller.dto.EmpleadoDtos;
+import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
 import com.example.empleados.repository.EmpleadoRepository;
 import java.util.Optional;
@@ -28,18 +29,33 @@ class EmpleadoUpdateServiceTest {
     private EmpleadoValidationService validationService;
 
     @Mock
+    private DepartamentoValidationService departamentoValidationService;
+
+    @Mock
     private CredencialEmpleadoService credencialEmpleadoService;
 
     private EmpleadoUpdateService updateService;
 
+    private Departamento departamento;
+
     @BeforeEach
     void setUp() {
-        updateService = new EmpleadoUpdateService(empleadoRepository, validationService, credencialEmpleadoService);
+        updateService = new EmpleadoUpdateService(
+            empleadoRepository,
+            validationService,
+            departamentoValidationService,
+            credencialEmpleadoService
+        );
+
+        departamento = new Departamento();
+        departamento.setId(1L);
+        departamento.setNombre("Sistemas");
+
     }
 
     @Test
     void update_shouldUpdateOnlyEmployeeDataWhenAccessFieldsAreMissing() {
-        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101");
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
         EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest("Ana Mod", "Calle 2", "555-0202");
 
         when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
@@ -50,12 +66,13 @@ class EmpleadoUpdateServiceTest {
         assertEquals("Ana Mod", result.getNombre());
         assertEquals("Calle 2", result.getDireccion());
         assertEquals("555-0202", result.getTelefono());
+        assertEquals(1L, result.getDepartamento().getId());
         verify(credencialEmpleadoService, never()).upsertAccessForEmpleado(any(), any(), any());
     }
 
     @Test
     void update_shouldActivateAccessWhenEmailAndPasswordAreProvided() {
-        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101");
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
         EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
             "Ana Mod",
             "Calle 2",
@@ -75,7 +92,7 @@ class EmpleadoUpdateServiceTest {
 
     @Test
     void update_shouldKeepEmployeeFieldsWhenOnlyAccessFieldsAreProvided() {
-        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101");
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
         EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
             null,
             null,
@@ -97,7 +114,7 @@ class EmpleadoUpdateServiceTest {
 
     @Test
     void update_shouldFailAndRollbackWhenEmailIsDuplicated() {
-        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101");
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
         EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
             "Ana Mod",
             "Calle 2",
@@ -116,12 +133,42 @@ class EmpleadoUpdateServiceTest {
         assertEquals("Ya existe una cuenta para el correo: admin@empresa.com", exception.getMessage());
     }
 
-    private Empleado empleado(String clave, String nombre, String direccion, String telefono) {
+    @Test
+    void update_shouldUpdateDepartamentoWhenDepartamentoIdIsProvided() {
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
+            "Ana",
+            "Calle 1",
+            "555-0101",
+            2L,
+            null,
+            null
+        );
+
+        when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
+        when(empleadoRepository.save(any(Empleado.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(departamentoValidationService.requireDepartamento(2L)).thenReturn(departamentoConId(2L, "RH"));
+
+        Empleado result = updateService.update("EMP-1001", request);
+
+        assertEquals(2L, result.getDepartamento().getId());
+        verify(departamentoValidationService).requireDepartamento(2L);
+    }
+
+    private Empleado empleado(String clave, String nombre, String direccion, String telefono, Long departamentoId, String departamentoNombre) {
         Empleado empleado = new Empleado();
         empleado.setClave(clave);
         empleado.setNombre(nombre);
         empleado.setDireccion(direccion);
         empleado.setTelefono(telefono);
+        empleado.setDepartamento(departamentoConId(departamentoId, departamentoNombre));
         return empleado;
+    }
+
+    private Departamento departamentoConId(Long id, String nombre) {
+        Departamento value = new Departamento();
+        value.setId(id);
+        value.setNombre(nombre);
+        return value;
     }
 }
