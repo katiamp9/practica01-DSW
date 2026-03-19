@@ -1,0 +1,15 @@
+<section class="panel-layout">
+  <header class="panel-header">
+    <div>
+      <p class="eyebrow">Área privada</p>
+      <h1>Panel de administración</h1>
+      <p>Bienvenido, {{ nombre() || 'Administrador' }}.</p>
+    </div>
+    <button type="button" class="btn btn-ghost" (click)="logout()">Cerrar sesión</button>
+  </header>
+
+  <article class="card">
+    <h2>Estado</h2>
+    <p>Autenticación activa con rol ROLE_ADMIN.</p>
+  </article>
+</section>
