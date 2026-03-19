@@ -2,6 +2,7 @@ package com.example.empleados.controller;
 
 import com.example.empleados.config.SecurityConfig;
 import com.example.empleados.controller.dto.EmpleadoDtos;
+import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
 import com.example.empleados.service.EmpleadoCreateService;
 import com.example.empleados.service.EmpleadoDeleteService;
@@ -75,8 +76,8 @@ class EmpleadoControllerIntegrationTest {
 
     @Test
     void shouldCreateEmpleadoWithGeneratedClave() throws Exception {
-        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101");
-        EmpleadoDtos.EmpleadoCreateRequest request = new EmpleadoDtos.EmpleadoCreateRequest("Ana", "Calle 1", "555-0101", null);
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
+        EmpleadoDtos.EmpleadoCreateRequest request = new EmpleadoDtos.EmpleadoCreateRequest("Ana", "Calle 1", "555-0101", 1L, null);
 
         when(createService.create(any())).thenReturn(empleado);
 
@@ -91,7 +92,7 @@ class EmpleadoControllerIntegrationTest {
 
     @Test
     void shouldReturnBadRequestWhenManualClaveSent() throws Exception {
-        EmpleadoDtos.EmpleadoCreateRequest request = new EmpleadoDtos.EmpleadoCreateRequest("Ana", "Calle 1", "555-0101", "EMP-9999");
+        EmpleadoDtos.EmpleadoCreateRequest request = new EmpleadoDtos.EmpleadoCreateRequest("Ana", "Calle 1", "555-0101", 1L, "EMP-9999");
         when(createService.create(any())).thenThrow(new com.example.empleados.service.ValidationException("No se permite enviar clave manualmente"));
 
         mockMvc.perform(post("/api/v1/empleados")
@@ -106,19 +107,20 @@ class EmpleadoControllerIntegrationTest {
     void shouldListAndFindByClave() throws Exception {
         when(queryService.findAll(any())).thenReturn(
             new PageImpl<>(
-                List.of(empleado("EMP-1001", "Ana", "Calle 1", "555-0101")),
+                List.of(empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas")),
                 PageRequest.of(0, 20),
                 1
             )
         );
-        when(queryService.findByClave("EMP-1001")).thenReturn(empleado("EMP-1001", "Ana", "Calle 1", "555-0101"));
+        when(queryService.findByClave("EMP-1001")).thenReturn(empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas"));
 
         mockMvc.perform(get("/api/v1/empleados")
                 .param("page", "0")
                 .param("sort", "nombre,asc")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content[0].clave").value("EMP-1001"));
+            .andExpect(jsonPath("$.content[0].clave").value("EMP-1001"))
+            .andExpect(jsonPath("$.content[0].departamentoId").value(1));
 
         mockMvc.perform(get("/api/v1/empleados/EMP-1001")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123")))
@@ -167,8 +169,8 @@ class EmpleadoControllerIntegrationTest {
 
     @Test
     void shouldUpdateAndDeleteEmpleado() throws Exception {
-        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest("Ana Mod", "Calle 2", "555-1111");
-        when(updateService.update(eq("EMP-1001"), any())).thenReturn(empleado("EMP-1001", "Ana Mod", "Calle 2", "555-1111"));
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest("Ana Mod", "Calle 2", "555-1111", 1L, null, null);
+        when(updateService.update(eq("EMP-1001"), any())).thenReturn(empleado("EMP-1001", "Ana Mod", "Calle 2", "555-1111", 1L, "Sistemas"));
         doNothing().when(deleteService).delete("EMP-1001");
 
         mockMvc.perform(put("/api/v1/empleados/EMP-1001")
@@ -184,6 +186,29 @@ class EmpleadoControllerIntegrationTest {
     }
 
     @Test
+    void shouldReturnBadRequestWhenPasswordIsSentWithoutEmailInUpdate() throws Exception {
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
+            null,
+            null,
+            null,
+            null,
+            null,
+            "admin123"
+        );
+
+        when(updateService.update(eq("EMP-1001"), any()))
+            .thenThrow(new com.example.empleados.service.ValidationException("si envías password también debes enviar email"));
+
+        mockMvc.perform(put("/api/v1/empleados/EMP-1001")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
+            .andExpect(jsonPath("$.message").value("si envías password también debes enviar email"));
+    }
+
+    @Test
     void shouldReturnNotFoundOnDeleteMissing() throws Exception {
         doThrow(new EmpleadoNotFoundException("EMP-9999")).when(deleteService).delete("EMP-9999");
 
@@ -193,12 +218,16 @@ class EmpleadoControllerIntegrationTest {
             .andExpect(jsonPath("$.code").value("NOT_FOUND"));
     }
 
-    private Empleado empleado(String clave, String nombre, String direccion, String telefono) {
+    private Empleado empleado(String clave, String nombre, String direccion, String telefono, Long departamentoId, String departamentoNombre) {
         Empleado empleado = new Empleado();
         empleado.setClave(clave);
         empleado.setNombre(nombre);
         empleado.setDireccion(direccion);
         empleado.setTelefono(telefono);
+        Departamento departamento = new Departamento();
+        departamento.setId(departamentoId);
+        departamento.setNombre(departamentoNombre);
+        empleado.setDepartamento(departamento);
         return empleado;
     }
 }

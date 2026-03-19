@@ -2,6 +2,7 @@ package com.example.empleados.service;
 
 import com.example.empleados.controller.dto.EmpleadoDtos;
 import com.example.empleados.domain.CuentaEmpleado;
+import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,9 @@ class EmpleadoCreateServiceTest {
     private EmpleadoValidationService validationService;
 
     @Mock
+    private DepartamentoValidationService departamentoValidationService;
+
+    @Mock
     private ClaveEmpleadoGenerator claveGenerator;
 
     @Mock
@@ -38,9 +42,23 @@ class EmpleadoCreateServiceTest {
 
     private EmpleadoCreateService createService;
 
+    private Departamento departamento;
+
     @BeforeEach
     void setUp() {
-        createService = new EmpleadoCreateService(empleadoRepository, validationService, claveGenerator, credencialEmpleadoService);
+        createService = new EmpleadoCreateService(
+            empleadoRepository,
+            validationService,
+            departamentoValidationService,
+            claveGenerator,
+            credencialEmpleadoService
+        );
+
+        departamento = new Departamento();
+        departamento.setId(1L);
+        departamento.setNombre("Sistemas");
+
+        when(departamentoValidationService.requireDepartamento(1L)).thenReturn(departamento);
     }
 
     @Test
@@ -49,6 +67,7 @@ class EmpleadoCreateServiceTest {
             " Ana ",
             " Calle 1 ",
             " 555-0101 ",
+            1L,
             null
         );
 
@@ -61,6 +80,7 @@ class EmpleadoCreateServiceTest {
         assertEquals("EMP-", result.getPrefijo());
         assertEquals(1001L, result.getConsecutivo());
         assertEquals("Ana", result.getNombre());
+        assertEquals(1L, result.getDepartamento().getId());
 
         ArgumentCaptor<Empleado> captor = ArgumentCaptor.forClass(Empleado.class);
         verify(empleadoRepository).save(captor.capture());
@@ -75,6 +95,7 @@ class EmpleadoCreateServiceTest {
             "Ana",
             "Calle 1",
             "555-0101",
+            1L,
             null
         );
 
@@ -102,6 +123,7 @@ class EmpleadoCreateServiceTest {
             "Ana",
             "Calle 1",
             "555-0101",
+            1L,
             null
         );
 
@@ -125,6 +147,7 @@ class EmpleadoCreateServiceTest {
             "Ana",
             "Calle 1",
             "555-0101",
+            1L,
             null,
             "Admin@Empresa.com",
             "admin123"
@@ -147,6 +170,7 @@ class EmpleadoCreateServiceTest {
             "Ana",
             "Calle 1",
             "555-0101",
+            1L,
             null,
             "admin@empresa.com",
             "admin123"

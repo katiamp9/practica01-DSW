@@ -1,6 +1,7 @@
 package com.example.empleados.controller.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public final class EmpleadoDtos {
@@ -21,6 +22,9 @@ public final class EmpleadoDtos {
         @Size(max = 100, message = "telefono debe tener máximo 100 caracteres")
         String telefono,
 
+        @NotNull(message = "departamentoId es obligatorio")
+        Long departamentoId,
+
         String clave,
 
         String email,
@@ -28,7 +32,17 @@ public final class EmpleadoDtos {
         String password
     ) {
         public EmpleadoCreateRequest(String nombre, String direccion, String telefono, String clave) {
-            this(nombre, direccion, telefono, clave, null, null);
+            this(nombre, direccion, telefono, null, clave, null, null);
+        }
+
+        public EmpleadoCreateRequest(
+            String nombre,
+            String direccion,
+            String telefono,
+            Long departamentoId,
+            String clave
+        ) {
+            this(nombre, direccion, telefono, departamentoId, clave, null, null);
         }
     }
 
@@ -42,12 +56,24 @@ public final class EmpleadoDtos {
         @Size(max = 100, message = "telefono debe tener máximo 100 caracteres")
         String telefono,
 
+        Long departamentoId,
+
         String email,
 
         String password
     ) {
         public EmpleadoUpdateRequest(String nombre, String direccion, String telefono) {
-            this(nombre, direccion, telefono, null, null);
+            this(nombre, direccion, telefono, null, null, null);
+        }
+
+        public EmpleadoUpdateRequest(
+            String nombre,
+            String direccion,
+            String telefono,
+            String email,
+            String password
+        ) {
+            this(nombre, direccion, telefono, null, email, password);
         }
     }
 
@@ -55,7 +81,8 @@ public final class EmpleadoDtos {
         String clave,
         String nombre,
         String direccion,
-        String telefono
+        String telefono,
+        Long departamentoId
     ) {
     }
 

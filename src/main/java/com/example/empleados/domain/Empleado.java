@@ -3,9 +3,12 @@ package com.example.empleados.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,6 +33,10 @@ public class Empleado {
 
     @Column(name = "telefono", nullable = false, length = 100)
     private String telefono;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "departamento_id", nullable = false)
+    private Departamento departamento;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -95,6 +102,14 @@ public class Empleado {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
     }
 
     public LocalDateTime getCreatedAt() {

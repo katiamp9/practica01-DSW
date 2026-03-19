@@ -11,15 +11,18 @@ public class EmpleadoUpdateService {
 
     private final EmpleadoRepository empleadoRepository;
     private final EmpleadoValidationService validationService;
+    private final DepartamentoValidationService departamentoValidationService;
     private final CredencialEmpleadoService credencialEmpleadoService;
 
     public EmpleadoUpdateService(
         EmpleadoRepository empleadoRepository,
         EmpleadoValidationService validationService,
+        DepartamentoValidationService departamentoValidationService,
         CredencialEmpleadoService credencialEmpleadoService
     ) {
         this.empleadoRepository = empleadoRepository;
         this.validationService = validationService;
+        this.departamentoValidationService = departamentoValidationService;
         this.credencialEmpleadoService = credencialEmpleadoService;
     }
 
@@ -39,8 +42,13 @@ public class EmpleadoUpdateService {
         if (request.telefono() != null) {
             empleado.setTelefono(request.telefono().trim());
         }
+        if (request.departamentoId() != null) {
+            empleado.setDepartamento(departamentoValidationService.requireDepartamento(request.departamentoId()));
+        }
 
-        if (request.email() != null && !request.email().trim().isEmpty()) {
+        boolean hasEmail = request.email() != null && !request.email().trim().isEmpty();
+        boolean hasPassword = request.password() != null && !request.password().trim().isEmpty();
+        if (hasEmail || hasPassword) {
             credencialEmpleadoService.upsertAccessForEmpleado(
                 clave,
                 request.email(),
