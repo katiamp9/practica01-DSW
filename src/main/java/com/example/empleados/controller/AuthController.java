@@ -20,7 +20,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthDtos.LoginSuccessResponse login(@Valid @RequestBody AuthDtos.LoginRequest request) {
-        boolean authenticated = authLoginService.login(request);
-        return new AuthDtos.LoginSuccessResponse(authenticated);
+        return authLoginService.login(request);
     }
 }

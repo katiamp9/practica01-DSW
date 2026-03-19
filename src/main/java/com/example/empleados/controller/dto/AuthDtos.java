@@ -19,7 +19,9 @@ public final class AuthDtos {
     }
 
     public record LoginSuccessResponse(
-        boolean authenticated
+        boolean authenticated,
+        String rol,
+        String nombre
     ) {
     }
 
