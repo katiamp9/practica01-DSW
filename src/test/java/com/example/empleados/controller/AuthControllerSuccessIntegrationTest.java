@@ -43,13 +43,16 @@ class AuthControllerSuccessIntegrationTest {
     @Test
     void shouldLoginSuccessfullyAndReturnAuthenticatedTrue() throws Exception {
         AuthDtos.LoginRequest request = new AuthDtos.LoginRequest("admin@empresa.com", "admin123");
-        when(authLoginService.login(any(AuthDtos.LoginRequest.class))).thenReturn(true);
+        when(authLoginService.login(any(AuthDtos.LoginRequest.class)))
+            .thenReturn(new AuthDtos.LoginSuccessResponse(true, "ROLE_ADMIN", "Admin"));
 
         mockMvc.perform(post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.authenticated").value(true));
+            .andExpect(jsonPath("$.authenticated").value(true))
+            .andExpect(jsonPath("$.rol").value("ROLE_ADMIN"))
+            .andExpect(jsonPath("$.nombre").value("Admin"));
 
         verify(authLoginService).login(any(AuthDtos.LoginRequest.class));
     }
