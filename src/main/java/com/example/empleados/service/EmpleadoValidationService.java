@@ -99,4 +99,8 @@ public class EmpleadoValidationService {
             throw new ValidationException("departamentoId debe ser mayor a 0");
         }
     }
+
+    public String normalizeRole(String role) {
+        return Roles.normalizeOrDefault(role);
+    }
 }

@@ -12,6 +12,12 @@ build/
 # Env and logs
 .env*
 *.log*
+node_modules/
+frontend-empleados/node_modules/
+dist/
+frontend-empleados/dist/
+.angular/
+coverage/
 
 # Docs/specs not needed in image
 specs/
