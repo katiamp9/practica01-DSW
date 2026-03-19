@@ -1,25 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  imports: [RouterOutlet],
   template: `
-    <main>
-      <h1>Empleados Frontend</h1>
-      <p>Base Angular 21 lista para integración con backend.</p>
-      @if (ready()) {
-        <small>Estado: listo</small>
-      }
-    </main>
+    <router-outlet />
   `,
-  styles: [
-    `
-      main {
-        padding: 2rem;
-      }
-    `
-  ]
+  styles: []
 })
-export class AppComponent {
-  protected readonly ready = signal(true);
-}
+export class AppComponent {}

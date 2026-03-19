@@ -6,6 +6,7 @@ import com.example.empleados.repository.CuentaEmpleadoRepository;
 import java.util.Locale;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthLoginService {
@@ -27,10 +28,11 @@ public class AuthLoginService {
         this.authenticationAuditService = authenticationAuditService;
     }
 
-    public boolean login(AuthDtos.LoginRequest request) {
+    @Transactional(readOnly = true)
+    public AuthDtos.LoginSuccessResponse login(AuthDtos.LoginRequest request) {
         String normalizedEmail = normalizeEmail(request.email());
 
-        cuentaEmpleadoRepository.findByCorreoIgnoreCase(normalizedEmail)
+        var cuentaEmpleado = cuentaEmpleadoRepository.findWithEmpleadoByCorreoIgnoreCase(normalizedEmail)
             .orElseThrow(() -> {
                 authenticationAuditService.logFailure(normalizedEmail, "EMAIL_NOT_FOUND");
                 return new InvalidCredentialsException();
@@ -49,7 +51,11 @@ public class AuthLoginService {
         }
 
         authenticationAuditService.logSuccess(normalizedEmail);
-        return true;
+        return new AuthDtos.LoginSuccessResponse(
+            true,
+            Roles.normalizeOrDefault(cuentaEmpleado.getEmpleado().getRol()),
+            cuentaEmpleado.getEmpleado().getNombre()
+        );
     }
 
     private String normalizeEmail(String email) {
