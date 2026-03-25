@@ -6,6 +6,7 @@ import com.example.empleados.service.ClaveCollisionException;
 import com.example.empleados.service.DepartamentoInUseException;
 import com.example.empleados.service.DepartamentoNotFoundException;
 import com.example.empleados.service.EmpleadoNotFoundException;
+import com.example.empleados.service.ForbiddenOperationException;
 import com.example.empleados.service.InvalidPaginationException;
 import com.example.empleados.service.InvalidCredentialsException;
 import com.example.empleados.service.ValidationException;
@@ -57,6 +58,12 @@ public class ApiExceptionHandler {
     public ResponseEntity<EmpleadoDtos.ErrorResponse> handleInvalidPagination(Exception ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(new EmpleadoDtos.ErrorResponse("UNPROCESSABLE_ENTITY", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ForbiddenOperationException.class)
+    public ResponseEntity<EmpleadoDtos.ErrorResponse> handleForbidden(ForbiddenOperationException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(new EmpleadoDtos.ErrorResponse("FORBIDDEN", ex.getMessage()));
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)

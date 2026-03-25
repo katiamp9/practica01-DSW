@@ -1,0 +1,62 @@
+<section class="form-card">
+  <header>
+    <h3>{{ mode === 'create' ? 'Crear empleado' : 'Editar empleado' }}</h3>
+    <p *ngIf="showNoDepartmentsWarning" class="warning">
+      No hay departamentos disponibles. Crea al menos uno para guardar.
+    </p>
+    <p *ngIf="operationError" class="error">{{ operationError }}</p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="grid">
+      <label *ngIf="mode === 'edit'">
+        <span>Clave *</span>
+        <input type="text" formControlName="clave" />
+      </label>
+
+      <label>
+        <span>Nombre *</span>
+        <input type="text" formControlName="nombre" />
+        <small *ngIf="form.controls.nombre.touched && form.controls.nombre.hasError('required')">El nombre es obligatorio.</small>
+      </label>
+
+      <label>
+        <span>Email corporativo *</span>
+        <input type="email" formControlName="email" [readonly]="mode === 'edit'" />
+        <small *ngIf="form.controls.email.touched && form.controls.email.hasError('required')">El email es obligatorio.</small>
+        <small *ngIf="form.controls.email.touched && form.controls.email.hasError('corporateEmail')">Usa un correo @empresa.com.</small>
+      </label>
+
+      <label>
+        <span>Departamento *</span>
+        <select formControlName="departamentoId">
+          <option [ngValue]="null">Selecciona un departamento</option>
+          <option *ngFor="let departamento of departamentos" [ngValue]="departamento.id">{{ departamento.nombre }}</option>
+        </select>
+        <small *ngIf="form.controls.departamentoId.touched && form.controls.departamentoId.hasError('required')">Selecciona un departamento.</small>
+      </label>
+
+      <label>
+        <span>Dirección</span>
+        <input type="text" formControlName="direccion" />
+      </label>
+
+      <label>
+        <span>Teléfono</span>
+        <input type="text" formControlName="telefono" />
+      </label>
+
+      <label>
+        <span>Contraseña {{ mode === 'create' ? '*' : '(opcional)' }}</span>
+        <input type="password" formControlName="password" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn ghost" (click)="onCancel()" [disabled]="submitting">Cancelar</button>
+      <button type="submit" class="btn primary" [disabled]="submitting || loadingDepartamentos || showNoDepartmentsWarning">
+        {{ submitting ? 'Guardando...' : mode === 'create' ? 'Crear empleado' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </form>
+</section>

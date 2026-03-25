@@ -3,6 +3,7 @@ package com.example.empleados.controller;
 import com.example.empleados.config.SecurityConfig;
 import com.example.empleados.controller.dto.DepartamentoDtos;
 import com.example.empleados.domain.Departamento;
+import com.example.empleados.repository.DepartamentoListaProjection;
 import com.example.empleados.service.DepartamentoInUseException;
 import com.example.empleados.service.DepartamentoNotFoundException;
 import com.example.empleados.service.DepartamentoService;
@@ -71,7 +72,7 @@ class DepartamentoControllerIntegrationTest {
     void shouldListDepartamentosWithPaginationAndSort() throws Exception {
         when(departamentoService.findAll(any())).thenReturn(
             new PageImpl<>(
-                List.of(departamento(1L, "Sistemas")),
+                List.of(projection(1L, "Sistemas", 2L)),
                 PageRequest.of(0, 20),
                 1
             )
@@ -79,11 +80,15 @@ class DepartamentoControllerIntegrationTest {
 
         mockMvc.perform(get("/api/v1/departamentos")
                 .param("page", "0")
+                .param("size", "20")
                 .param("sort", "nombre,asc")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123")))
             .andExpect(status().isOk())
+            .andExpect(jsonPath("$.number").value(0))
+            .andExpect(jsonPath("$.size").value(20))
             .andExpect(jsonPath("$.content[0].id").value(1))
-            .andExpect(jsonPath("$.content[0].nombre").value("Sistemas"));
+                .andExpect(jsonPath("$.content[0].nombre").value("Sistemas"))
+                .andExpect(jsonPath("$.content[0].totalEmpleados").value(2));
     }
 
     @Test
@@ -171,5 +176,24 @@ class DepartamentoControllerIntegrationTest {
         departamento.setId(id);
         departamento.setNombre(nombre);
         return departamento;
+    }
+
+    private DepartamentoListaProjection projection(Long id, String nombre, Long totalEmpleados) {
+        return new DepartamentoListaProjection() {
+            @Override
+            public Long getId() {
+                return id;
+            }
+
+            @Override
+            public String getNombre() {
+                return nombre;
+            }
+
+            @Override
+            public Long getTotalEmpleados() {
+                return totalEmpleados;
+            }
+        };
     }
 }
