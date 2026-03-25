@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { APP_ROLES, AppRole, ALL_ROLES } from '../modelos/app-roles';
+import { APP_ROLES, AppRole, normalizeAppRole } from '../modelos/app-roles';
 import { AuthLoginResponse } from '../modelos/auth-login.model';
 import { AuthSession } from '../modelos/auth-session.model';
 import { SESSION_STORAGE_KEY } from '../modelos/session.constants';
@@ -120,23 +120,6 @@ export class AuthService {
   }
 
   private normalizeRole(role: string): AppRole | null {
-    if (!role) {
-      return null;
-    }
-
-    const normalized = role.trim().toUpperCase();
-    if (ALL_ROLES.includes(normalized as AppRole)) {
-      return normalized as AppRole;
-    }
-
-    if (normalized === 'ADMIN') {
-      return APP_ROLES.ADMIN;
-    }
-
-    if (normalized === 'USER') {
-      return APP_ROLES.USER;
-    }
-
-    return null;
+    return normalizeAppRole(role);
   }
 }

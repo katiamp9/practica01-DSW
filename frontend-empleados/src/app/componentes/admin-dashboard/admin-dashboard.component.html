@@ -8,8 +8,58 @@
     <button type="button" class="btn btn-ghost" (click)="logout()">Cerrar sesión</button>
   </header>
 
+  <nav class="admin-nav" aria-label="Navegación administrativa">
+    <a routerLink="/admin-dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+    <a routerLink="/admin/empleados" routerLinkActive="active-link">Empleados</a>
+    <a routerLink="/admin/departamentos" routerLinkActive="active-link">Departamentos</a>
+  </nav>
+
   <article class="card">
-    <h2>Estado</h2>
-    <p>Autenticación activa con rol ROLE_ADMIN.</p>
+    <div class="card-header">
+      <h2>Listado de empleados</h2>
+      <p class="meta" *ngIf="status() === 'data'">{{ totalElements() }} empleados registrados</p>
+    </div>
+
+    <div class="state-block" *ngIf="status() === 'loading'">
+      <p>Cargando empleados...</p>
+    </div>
+
+    <div class="state-block empty" *ngIf="status() === 'empty'">
+      <p>{{ emptyMessage() }}</p>
+    </div>
+
+    <div class="state-block error" *ngIf="status() === 'error'">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn btn-primary" (click)="retry()">Reintentar</button>
+    </div>
+
+    <div class="table-wrapper" *ngIf="status() === 'data'">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Clave</th>
+            <th>Rol</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let empleado of empleados(); trackBy: trackByClave">
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.clave }}</td>
+            <td>
+              <span class="badge" [ngClass]="roleClass(empleado.rol)">
+                {{ empleado.rol || 'ROLE_UNKNOWN' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-controls">
+        <button type="button" class="btn btn-ghost" [disabled]="!hasPrevious()" (click)="previousPage()">Anterior</button>
+        <span>Página {{ currentPage() + 1 }} de {{ totalPages() || 1 }}</span>
+        <button type="button" class="btn btn-ghost" [disabled]="!hasNext()" (click)="nextPage()">Siguiente</button>
+      </div>
+    </div>
   </article>
 </section>

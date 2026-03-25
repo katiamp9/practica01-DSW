@@ -16,7 +16,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .eyebrow {
@@ -32,12 +32,132 @@ h1 {
   font-size: 1.9rem;
 }
 
+.admin-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-nav a {
+  text-decoration: none;
+  color: var(--text-primary);
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.admin-nav a:hover,
+.admin-nav a.active-link {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
 .card {
   background: var(--surface-card);
   border: 1px solid var(--border-color);
   border-radius: 1rem;
   padding: 1.25rem;
   box-shadow: var(--shadow-soft);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-header h2 {
+  margin: 0;
+}
+
+.meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.state-block {
+  padding: 1rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border-color);
+  background: #f8fafc;
+}
+
+.state-block p {
+  margin: 0;
+}
+
+.state-block.error {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem;
+}
+
+tbody td {
+  padding: 0.8rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+tbody tr:hover {
+  background: #eff6ff;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-admin {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-user {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-unknown {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
 .btn {
@@ -50,4 +170,15 @@ h1 {
 .btn-ghost {
   background: transparent;
   color: var(--text-primary);
+}
+
+.btn-primary {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

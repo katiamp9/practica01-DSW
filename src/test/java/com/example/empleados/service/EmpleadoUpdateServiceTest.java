@@ -1,8 +1,10 @@
 package com.example.empleados.service;
 
 import com.example.empleados.controller.dto.EmpleadoDtos;
+import com.example.empleados.domain.CuentaEmpleado;
 import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
+import com.example.empleados.repository.CuentaEmpleadoRepository;
 import com.example.empleados.repository.EmpleadoRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +34,9 @@ class EmpleadoUpdateServiceTest {
     private DepartamentoValidationService departamentoValidationService;
 
     @Mock
+    private CuentaEmpleadoRepository cuentaEmpleadoRepository;
+
+    @Mock
     private CredencialEmpleadoService credencialEmpleadoService;
 
     private EmpleadoUpdateService updateService;
@@ -44,6 +49,7 @@ class EmpleadoUpdateServiceTest {
             empleadoRepository,
             validationService,
             departamentoValidationService,
+            cuentaEmpleadoRepository,
             credencialEmpleadoService
         );
 
@@ -73,48 +79,7 @@ class EmpleadoUpdateServiceTest {
     @Test
     void update_shouldActivateAccessWhenEmailAndPasswordAreProvided() {
         Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
-        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
-            "Ana Mod",
-            "Calle 2",
-            "555-0202",
-            "Admin@Empresa.com",
-            "admin123"
-        );
-
-        when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
-        when(empleadoRepository.save(any(Empleado.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Empleado result = updateService.update("EMP-1001", request);
-
-        assertEquals("Ana Mod", result.getNombre());
-        verify(credencialEmpleadoService).upsertAccessForEmpleado("EMP-1001", "Admin@Empresa.com", "admin123");
-    }
-
-    @Test
-    void update_shouldKeepEmployeeFieldsWhenOnlyAccessFieldsAreProvided() {
-        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
-        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
-            null,
-            null,
-            null,
-            "Admin@Empresa.com",
-            "admin123"
-        );
-
-        when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
-        when(empleadoRepository.save(any(Empleado.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Empleado result = updateService.update("EMP-1001", request);
-
-        assertEquals("Ana", result.getNombre());
-        assertEquals("Calle 1", result.getDireccion());
-        assertEquals("555-0101", result.getTelefono());
-        verify(credencialEmpleadoService).upsertAccessForEmpleado("EMP-1001", "Admin@Empresa.com", "admin123");
-    }
-
-    @Test
-    void update_shouldFailAndRollbackWhenEmailIsDuplicated() {
-        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
+        CuentaEmpleado cuenta = cuenta("admin@empresa.com");
         EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
             "Ana Mod",
             "Calle 2",
@@ -124,6 +89,53 @@ class EmpleadoUpdateServiceTest {
         );
 
         when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
+        when(cuentaEmpleadoRepository.findByEmpleadoClave("EMP-1001")).thenReturn(Optional.of(cuenta));
+        when(empleadoRepository.save(any(Empleado.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Empleado result = updateService.update("EMP-1001", request);
+
+        assertEquals("Ana Mod", result.getNombre());
+        verify(credencialEmpleadoService).upsertAccessForEmpleado("EMP-1001", "admin@empresa.com", "admin123");
+    }
+
+    @Test
+    void update_shouldKeepEmployeeFieldsWhenOnlyAccessFieldsAreProvided() {
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
+        CuentaEmpleado cuenta = cuenta("admin@empresa.com");
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
+            null,
+            null,
+            null,
+            "admin@empresa.com",
+            "admin123"
+        );
+
+        when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
+        when(cuentaEmpleadoRepository.findByEmpleadoClave("EMP-1001")).thenReturn(Optional.of(cuenta));
+        when(empleadoRepository.save(any(Empleado.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Empleado result = updateService.update("EMP-1001", request);
+
+        assertEquals("Ana", result.getNombre());
+        assertEquals("Calle 1", result.getDireccion());
+        assertEquals("555-0101", result.getTelefono());
+        verify(credencialEmpleadoService).upsertAccessForEmpleado("EMP-1001", "admin@empresa.com", "admin123");
+    }
+
+    @Test
+    void update_shouldFailAndRollbackWhenEmailIsDuplicated() {
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
+        CuentaEmpleado cuenta = cuenta("admin@empresa.com");
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
+            "Ana Mod",
+            "Calle 2",
+            "555-0202",
+            "admin@empresa.com",
+            "admin123"
+        );
+
+        when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
+        when(cuentaEmpleadoRepository.findByEmpleadoClave("EMP-1001")).thenReturn(Optional.of(cuenta));
         org.mockito.Mockito.doThrow(new ValidationException("Ya existe una cuenta para el correo: admin@empresa.com"))
             .when(credencialEmpleadoService)
             .upsertAccessForEmpleado(eq("EMP-1001"), eq("admin@empresa.com"), eq("admin123"));
@@ -147,12 +159,53 @@ class EmpleadoUpdateServiceTest {
 
         when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
         when(empleadoRepository.save(any(Empleado.class))).thenAnswer(invocation -> invocation.getArgument(0));
-    when(departamentoValidationService.requireDepartamento(2L)).thenReturn(departamentoConId(2L, "RH"));
+        when(departamentoValidationService.requireDepartamento(2L)).thenReturn(departamentoConId(2L, "RH"));
 
         Empleado result = updateService.update("EMP-1001", request);
 
         assertEquals(2L, result.getDepartamento().getId());
         verify(departamentoValidationService).requireDepartamento(2L);
+    }
+
+    @Test
+    void update_shouldRejectWhenRequestedEmailDiffersFromPersistedEmail() {
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
+        CuentaEmpleado cuenta = cuenta("actual@empresa.com");
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
+            "Ana",
+            "Calle 1",
+            "555-0101",
+            "nuevo@empresa.com",
+            "admin123"
+        );
+
+        when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
+        when(cuentaEmpleadoRepository.findByEmpleadoClave("EMP-1001")).thenReturn(Optional.of(cuenta));
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> updateService.update("EMP-1001", request));
+
+        assertEquals("email es inmutable en edición de empleado", exception.getMessage());
+        verify(credencialEmpleadoService, never()).upsertAccessForEmpleado(any(), any(), any());
+    }
+
+    @Test
+    void update_shouldRejectWhenEmpleadoHasNoAccountButEmailIsSent() {
+        Empleado empleado = empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas");
+        EmpleadoDtos.EmpleadoUpdateRequest request = new EmpleadoDtos.EmpleadoUpdateRequest(
+            "Ana",
+            "Calle 1",
+            "555-0101",
+            "admin@empresa.com",
+            "admin123"
+        );
+
+        when(empleadoRepository.findById("EMP-1001")).thenReturn(Optional.of(empleado));
+        when(cuentaEmpleadoRepository.findByEmpleadoClave("EMP-1001")).thenReturn(Optional.empty());
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> updateService.update("EMP-1001", request));
+
+        assertEquals("email es inmutable en edición de empleado", exception.getMessage());
+        verify(credencialEmpleadoService, never()).upsertAccessForEmpleado(any(), any(), any());
     }
 
     private Empleado empleado(String clave, String nombre, String direccion, String telefono, Long departamentoId, String departamentoNombre) {
@@ -170,5 +223,11 @@ class EmpleadoUpdateServiceTest {
         value.setId(id);
         value.setNombre(nombre);
         return value;
+    }
+
+    private CuentaEmpleado cuenta(String correo) {
+        CuentaEmpleado cuenta = new CuentaEmpleado();
+        cuenta.setCorreo(correo);
+        return cuenta;
     }
 }

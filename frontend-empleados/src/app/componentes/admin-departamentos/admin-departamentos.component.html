@@ -1,0 +1,109 @@
+<section class="panel-layout">
+  <header class="panel-header">
+    <div>
+      <p class="eyebrow">Administración</p>
+      <h1>Gestión de departamentos</h1>
+      <p>Bienvenido, {{ nombre() || 'Administrador' }}.</p>
+    </div>
+    <button type="button" class="btn btn-ghost" (click)="logout()">Cerrar sesión</button>
+  </header>
+
+  <nav class="admin-nav" aria-label="Navegación administrativa">
+    <a routerLink="/admin-dashboard" routerLinkActive="active-link">Inicio</a>
+    <a routerLink="/admin/empleados" routerLinkActive="active-link">Empleados</a>
+    <a routerLink="/admin/departamentos" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Departamentos</a>
+  </nav>
+
+  <article class="card">
+    <div class="card-header">
+      <div>
+        <h2>Listado de departamentos</h2>
+        <p class="meta" *ngIf="status() === 'data'">{{ totalElements() }} departamentos registrados</p>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="openCreateForm()">Nuevo departamento</button>
+    </div>
+
+    <div class="toolbar">
+      <label class="search-field" for="departamento-search">
+        <span>Buscar por nombre</span>
+        <input
+          id="departamento-search"
+          type="text"
+          [value]="searchTerm()"
+          (input)="setSearch($any($event.target).value)"
+          placeholder="Ej. Sistemas"
+        />
+      </label>
+      <p class="search-note" *ngIf="hasSearch()">El filtro se aplica sobre la página cargada.</p>
+    </div>
+
+    <app-departamento-form-modal
+      *ngIf="formVisible()"
+      [mode]="formMode()"
+      [departamento]="editingDepartamento()"
+      [submitting]="submitting()"
+      [operationError]="formOperationError()"
+      (canceled)="handleModalCancel($event)"
+      (submitted)="submitForm($event)"
+    />
+
+    <div class="state-block" *ngIf="status() === 'loading'">
+      <p>Cargando departamentos...</p>
+    </div>
+
+    <div class="state-block empty" *ngIf="status() === 'empty'">
+      <p>No hay departamentos para mostrar por ahora.</p>
+    </div>
+
+    <div class="state-block error" *ngIf="status() === 'error'">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn btn-primary" (click)="retry()">Reintentar</button>
+    </div>
+
+    <div class="state-block empty" *ngIf="status() === 'data' && filteredItems().length === 0">
+      <p>No hay resultados para el filtro actual en esta página.</p>
+    </div>
+
+    <div class="table-wrapper" *ngIf="status() === 'data' && filteredItems().length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Personal</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let departamento of filteredItems(); trackBy: trackById">
+            <td>{{ departamento.nombre }}</td>
+            <td>{{ departamento.totalEmpleados }}</td>
+            <td class="actions-cell">
+              <button type="button" class="btn btn-ghost" (click)="openEditForm(departamento)">Editar</button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                [disabled]="departamento.totalEmpleados > 0"
+                [title]="deleteTooltip(departamento)"
+                (click)="deleteDepartamento(departamento)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-controls">
+        <button type="button" class="btn btn-ghost" [disabled]="!hasPrevious()" (click)="previousPage()">Anterior</button>
+        <span>Página {{ currentPage() + 1 }} de {{ totalPages() || 1 }}</span>
+        <button type="button" class="btn btn-ghost" [disabled]="!hasNext()" (click)="nextPage()">Siguiente</button>
+      </div>
+    </div>
+  </article>
+
+  <app-ui-toast
+    *ngIf="toastMessage()"
+    [message]="toastMessage() || ''"
+    [variant]="toastVariant()"
+    (dismissed)="dismissToast()"
+  />
+</section>
