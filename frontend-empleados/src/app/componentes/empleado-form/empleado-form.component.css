@@ -1,0 +1,75 @@
+.form-card {
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  background: var(--surface-card);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-card h3 {
+  margin: 0 0 0.35rem;
+}
+
+.warning {
+  margin: 0.25rem 0;
+  color: var(--danger);
+}
+
+.error {
+  margin: 0.25rem 0;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+input,
+select {
+  border: 1px solid var(--border-color);
+  border-radius: 0.55rem;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+}
+
+small {
+  color: var(--danger);
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn {
+  border: 1px solid var(--border-color);
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.btn.primary {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #fff;
+}

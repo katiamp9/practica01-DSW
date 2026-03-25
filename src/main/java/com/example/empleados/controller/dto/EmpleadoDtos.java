@@ -1,5 +1,6 @@
 package com.example.empleados.controller.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -78,11 +79,29 @@ public final class EmpleadoDtos {
     }
 
     public record EmpleadoResponse(
+        @Schema(example = "EMP-1001")
         String clave,
+
+        @Schema(example = "Ana")
         String nombre,
+
+        @Schema(
+            description = "Email de la cuenta asociada. Puede ser null cuando el empleado no tiene cuenta (resultado de LEFT JOIN).",
+            nullable = true,
+            example = "ana@empresa.com"
+        )
+        String email,
+
+        @Schema(example = "Calle 1")
         String direccion,
+
+        @Schema(example = "555-0101")
         String telefono,
+
+        @Schema(example = "1", nullable = true)
         Long departamentoId,
+
+        @Schema(example = "USER")
         String rol
     ) {
     }

@@ -3,6 +3,7 @@ package com.example.empleados.service;
 import com.example.empleados.controller.dto.AuthDtos;
 import com.example.empleados.domain.CredencialEmpleado;
 import com.example.empleados.domain.CuentaEmpleado;
+import com.example.empleados.domain.Empleado;
 import com.example.empleados.repository.CuentaEmpleadoRepository;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -54,19 +56,26 @@ class AuthLoginServiceSuccessTest {
         cuentaEmpleado.setId(accountId);
         cuentaEmpleado.setCorreo("admin@empresa.com");
 
+        Empleado empleado = new Empleado();
+        empleado.setRol("ROLE_ADMIN");
+        empleado.setNombre("Administrador Inicial");
+        cuentaEmpleado.setEmpleado(empleado);
+
         CredencialEmpleado credencialEmpleado = new CredencialEmpleado();
         credencialEmpleado.setPasswordHash("$2y$10$hash");
 
-        when(cuentaEmpleadoRepository.findByCorreoIgnoreCase(eq("admin@empresa.com")))
+        when(cuentaEmpleadoRepository.findWithEmpleadoByCorreoIgnoreCase(eq("admin@empresa.com")))
             .thenReturn(Optional.of(cuentaEmpleado));
         when(credencialEmpleadoService.findCredentialByEmail(eq("admin@empresa.com")))
             .thenReturn(Optional.of(credencialEmpleado));
         when(passwordEncoder.matches(eq("admin123"), eq("$2y$10$hash"))).thenReturn(true);
 
-        boolean authenticated = authLoginService.login(request);
+        AuthDtos.LoginSuccessResponse response = authLoginService.login(request);
 
-        assertTrue(authenticated);
-        verify(cuentaEmpleadoRepository).findByCorreoIgnoreCase("admin@empresa.com");
+        assertTrue(response.authenticated());
+        assertEquals("ROLE_ADMIN", response.rol());
+        assertEquals("Administrador Inicial", response.nombre());
+        verify(cuentaEmpleadoRepository).findWithEmpleadoByCorreoIgnoreCase("admin@empresa.com");
         verify(credencialEmpleadoService).findCredentialByEmail("admin@empresa.com");
         verify(passwordEncoder).matches("admin123", "$2y$10$hash");
         verify(authenticationAuditService).logSuccess("admin@empresa.com");

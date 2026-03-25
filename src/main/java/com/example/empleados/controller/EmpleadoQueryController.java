@@ -3,6 +3,9 @@ package com.example.empleados.controller;
 import com.example.empleados.controller.dto.EmpleadoDtos;
 import com.example.empleados.service.InvalidPaginationException;
 import com.example.empleados.service.EmpleadoQueryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +31,12 @@ public class EmpleadoQueryController {
         this.queryService = queryService;
     }
 
+    @Operation(summary = "Listar empleados", description = "Retorna empleados paginados con campo email proveniente de LEFT JOIN con cuentas_empleado.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Listado paginado de empleados"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "422", description = "Parámetros de paginación inválidos")
+    })
     @GetMapping
     public Page<EmpleadoDtos.EmpleadoResponse> list(
         @RequestParam(name = "page", required = false) Integer page,
@@ -40,6 +49,12 @@ public class EmpleadoQueryController {
         return queryService.findAll(pageable).map(EmpleadoMapper::toResponse);
     }
 
+    @Operation(summary = "Obtener empleado por clave")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Empleado encontrado"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "404", description = "Empleado no encontrado")
+    })
     @GetMapping("/{clave}")
     public EmpleadoDtos.EmpleadoResponse getByClave(@PathVariable String clave) {
         return EmpleadoMapper.toResponse(queryService.findByClave(clave));

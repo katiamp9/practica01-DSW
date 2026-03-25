@@ -4,11 +4,13 @@ import com.example.empleados.config.SecurityConfig;
 import com.example.empleados.controller.dto.EmpleadoDtos;
 import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
+import com.example.empleados.repository.EmpleadoListProjection;
 import com.example.empleados.service.EmpleadoCreateService;
 import com.example.empleados.service.EmpleadoDeleteService;
 import com.example.empleados.service.EmpleadoNotFoundException;
 import com.example.empleados.service.EmpleadoQueryService;
 import com.example.empleados.service.EmpleadoUpdateService;
+import com.example.empleados.service.ForbiddenOperationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -107,12 +109,12 @@ class EmpleadoControllerIntegrationTest {
     void shouldListAndFindByClave() throws Exception {
         when(queryService.findAll(any())).thenReturn(
             new PageImpl<>(
-                List.of(empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas")),
+                List.of(empleadoProjection("EMP-1001", "Ana", "ana@empresa.com", "Calle 1", "555-0101", 1L, "USER")),
                 PageRequest.of(0, 20),
                 1
             )
         );
-        when(queryService.findByClave("EMP-1001")).thenReturn(empleado("EMP-1001", "Ana", "Calle 1", "555-0101", 1L, "Sistemas"));
+        when(queryService.findByClave("EMP-1001")).thenReturn(empleadoProjection("EMP-1001", "Ana", "ana@empresa.com", "Calle 1", "555-0101", 1L, "USER"));
 
         mockMvc.perform(get("/api/v1/empleados")
                 .param("page", "0")
@@ -120,12 +122,14 @@ class EmpleadoControllerIntegrationTest {
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123")))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content[0].clave").value("EMP-1001"))
+            .andExpect(jsonPath("$.content[0].email").value("ana@empresa.com"))
             .andExpect(jsonPath("$.content[0].departamentoId").value(1));
 
         mockMvc.perform(get("/api/v1/empleados/EMP-1001")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.clave").value("EMP-1001"));
+            .andExpect(jsonPath("$.clave").value("EMP-1001"))
+            .andExpect(jsonPath("$.email").value("ana@empresa.com"));
     }
 
     @Test
@@ -218,6 +222,18 @@ class EmpleadoControllerIntegrationTest {
             .andExpect(jsonPath("$.code").value("NOT_FOUND"));
     }
 
+    @Test
+    void shouldReturnForbiddenOnDeleteProtectedAdmin() throws Exception {
+        doThrow(new ForbiddenOperationException("No se permite eliminar la cuenta del admin principal"))
+            .when(deleteService)
+            .delete("EMP-1001");
+
+        mockMvc.perform(delete("/api/v1/empleados/EMP-1001")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123")))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.code").value("FORBIDDEN"));
+    }
+
     private Empleado empleado(String clave, String nombre, String direccion, String telefono, Long departamentoId, String departamentoNombre) {
         Empleado empleado = new Empleado();
         empleado.setClave(clave);
@@ -229,5 +245,52 @@ class EmpleadoControllerIntegrationTest {
         departamento.setNombre(departamentoNombre);
         empleado.setDepartamento(departamento);
         return empleado;
+    }
+
+    private EmpleadoListProjection empleadoProjection(
+        String clave,
+        String nombre,
+        String email,
+        String direccion,
+        String telefono,
+        Long departamentoId,
+        String rol
+    ) {
+        return new EmpleadoListProjection() {
+            @Override
+            public String getClave() {
+                return clave;
+            }
+
+            @Override
+            public String getNombre() {
+                return nombre;
+            }
+
+            @Override
+            public String getDireccion() {
+                return direccion;
+            }
+
+            @Override
+            public String getTelefono() {
+                return telefono;
+            }
+
+            @Override
+            public Long getDepartamentoId() {
+                return departamentoId;
+            }
+
+            @Override
+            public String getRol() {
+                return rol;
+            }
+
+            @Override
+            public String getEmail() {
+                return email;
+            }
+        };
     }
 }
