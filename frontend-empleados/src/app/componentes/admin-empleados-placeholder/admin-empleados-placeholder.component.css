@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+
+.placeholder-layout {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.placeholder-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+h1 {
+  margin: 0.25rem 0;
+}
+
+.message {
+  margin: 0.5rem 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+a {
+  color: var(--brand-primary);
+  text-decoration: none;
+}

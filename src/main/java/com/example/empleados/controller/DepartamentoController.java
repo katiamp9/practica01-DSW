@@ -3,6 +3,9 @@ package com.example.empleados.controller;
 import com.example.empleados.controller.dto.DepartamentoDtos;
 import com.example.empleados.service.DepartamentoService;
 import com.example.empleados.service.InvalidPaginationException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +40,13 @@ public class DepartamentoController {
     }
 
     @GetMapping
-    public Page<DepartamentoDtos.DepartamentoResponse> list(
+    @Operation(summary = "Listar departamentos paginados")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Listado paginado de departamentos"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "422", description = "Parámetros de paginación inválidos")
+    })
+    public Page<DepartamentoDtos.DepartamentoListResponse> list(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false, defaultValue = "20") Integer size,
         @RequestParam(name = "sort", required = false) String[] sort
@@ -46,10 +55,20 @@ public class DepartamentoController {
         validatePagination(page, size, sortParameters);
         Pageable pageable = PageRequest.of(page, size, parseSort(sortParameters));
         return departamentoService.findAll(pageable)
-            .map(departamento -> new DepartamentoDtos.DepartamentoResponse(departamento.getId(), departamento.getNombre()));
+            .map(departamento -> new DepartamentoDtos.DepartamentoListResponse(
+                departamento.getId(),
+                departamento.getNombre(),
+                departamento.getTotalEmpleados()
+            ));
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener departamento por id")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Departamento encontrado"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "404", description = "Departamento no encontrado")
+    })
     public DepartamentoDtos.DepartamentoResponse getById(@PathVariable Long id) {
         var departamento = departamentoService.findById(id);
         return new DepartamentoDtos.DepartamentoResponse(departamento.getId(), departamento.getNombre());
@@ -57,12 +76,25 @@ public class DepartamentoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Crear departamento")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Departamento creado"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "400", description = "Solicitud inválida")
+    })
     public DepartamentoDtos.DepartamentoResponse create(@Valid @RequestBody DepartamentoDtos.DepartamentoRequest request) {
         var created = departamentoService.create(request);
         return new DepartamentoDtos.DepartamentoResponse(created.getId(), created.getNombre());
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar departamento")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Departamento actualizado"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+        @ApiResponse(responseCode = "404", description = "Departamento no encontrado")
+    })
     public DepartamentoDtos.DepartamentoResponse update(
         @PathVariable Long id,
         @Valid @RequestBody DepartamentoDtos.DepartamentoRequest request
@@ -73,6 +105,13 @@ public class DepartamentoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Eliminar departamento")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Departamento eliminado"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "404", description = "Departamento no encontrado"),
+        @ApiResponse(responseCode = "409", description = "Departamento en uso por empleados asociados")
+    })
     public void delete(@PathVariable Long id) {
         departamentoService.delete(id);
     }

@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 
+import { AdminDepartamentosComponent } from './componentes/admin-departamentos/admin-departamentos.component';
 import { AdminDashboardComponent } from './componentes/admin-dashboard/admin-dashboard.component';
+import { AdminEmpleadosComponent } from './componentes/admin-empleados/admin-empleados.component';
 import { HomeComponent } from './componentes/home/home.component';
 import { LoginComponent } from './componentes/login/login.component';
 import { authGuard } from './guards/auth.guard';
@@ -23,6 +25,18 @@ export const appRoutes: Routes = [
     component: HomeComponent,
     canActivate: [authGuard, roleGuard],
     data: { role: APP_ROLES.USER }
+  },
+  {
+    path: 'admin/empleados',
+    component: AdminEmpleadosComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { role: APP_ROLES.ADMIN }
+  },
+  {
+    path: 'admin/departamentos',
+    component: AdminDepartamentosComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { role: APP_ROLES.ADMIN }
   },
   {
     path: '',
