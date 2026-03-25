@@ -1,17 +1,129 @@
 :root {
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  --surface-bg: #f1f5f9;
-  --surface-card: #ffffff;
-  --text-primary: #0f172a;
-  --text-muted: #475569;
-  --border-color: #cbd5e1;
-  --brand-primary: #2563eb;
-  --danger: #b91c1c;
-  --shadow-soft: 0 16px 30px rgba(15, 23, 42, 0.12);
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  --surface-bg: #0d1117;
+  --surface-card: #161b22;
+  --text-primary: #c9d1d9;
+  --text-muted: #8b949e;
+  --border-color: #30363d;
+  --brand-primary: #238636;
+  --brand-primary-hover: #2ea043;
+  --danger: #cf222e;
+  --warning: #9e6a03;
+  --header-bg: #161b22;
+  --header-fg: #c9d1d9;
+  --header-link-muted: #c9d1d9;
+  --header-link-active-bg: #21262d;
+  --radius-box: 6px;
+  --radius-control: 6px;
+  --shadow-soft: 0 8px 24px rgba(1, 4, 9, 0.35);
 }
 
 body {
   margin: 0;
   background: var(--surface-bg);
   color: var(--text-primary);
+  font-family: inherit;
+}
+
+.gh-box {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-box);
+  box-shadow: var(--shadow-soft);
+}
+
+.gh-btn {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-control);
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.gh-btn-primary {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #ffffff;
+}
+
+.gh-btn-primary:hover:enabled {
+  background: var(--brand-primary-hover);
+  border-color: var(--brand-primary-hover);
+}
+
+.gh-btn-secondary {
+  background: #21262d;
+  color: var(--text-primary);
+}
+
+.gh-btn-secondary:hover:enabled {
+  background: #30363d;
+}
+
+.gh-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gh-table thead th {
+  background: #161b22;
+  text-align: left;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem;
+}
+
+.gh-table tbody td {
+  padding: 0.8rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.gh-table tbody tr:hover {
+  background: #1f2630;
+}
+
+.gh-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  border-radius: 999px;
+  padding: 0.12rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #21262d;
+  color: var(--text-muted);
+}
+
+.gh-status-error {
+  border-color: #f85149;
+  background: rgba(248, 81, 73, 0.15);
+  color: #ff7b72;
+}
+
+input,
+select,
+textarea {
+  background: #0d1117;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-control);
+  font: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(35, 134, 54, 0.2);
+  outline: none;
 }
