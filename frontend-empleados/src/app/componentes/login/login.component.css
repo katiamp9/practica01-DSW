@@ -1,9 +1,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--brand-primary) 18%, transparent), transparent 48%),
-    linear-gradient(180deg, var(--text-primary) 0%, #111827 100%);
+  background: var(--surface-bg);
 }
 
 .login-layout {
@@ -15,10 +13,10 @@
 
 .login-card {
   width: min(100%, 420px);
-  background: color-mix(in srgb, var(--surface-card) 96%, transparent);
-  border-radius: 1.2rem;
-  border: 1px solid color-mix(in srgb, var(--border-color) 90%, transparent);
-  box-shadow: 0 20px 45px color-mix(in srgb, var(--text-primary) 28%, transparent);
+  background: var(--surface-card);
+  border-radius: var(--radius-box);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
   padding: 1.65rem;
 }
 
@@ -58,15 +56,17 @@ label {
 }
 
 input {
+  background: var(--surface-bg);
+  color: var(--text-primary);
   border: 1px solid var(--border-color);
-  border-radius: 0.7rem;
+  border-radius: var(--radius-control);
   padding: 0.65rem 0.75rem;
   outline: none;
 }
 
 input:focus {
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 16%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 24%, transparent);
 }
 
 .field-error,
@@ -78,13 +78,17 @@ input:focus {
 
 button {
   margin-top: 0.4rem;
-  border: 0;
-  border-radius: 0.7rem;
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--radius-control);
   padding: 0.7rem 0.9rem;
   color: #fff;
-  background: linear-gradient(135deg, var(--brand-primary), color-mix(in srgb, var(--brand-primary) 85%, #1e3a8a));
+  background: var(--brand-primary);
   font-weight: 600;
   cursor: pointer;
+}
+
+button:hover:enabled {
+  background: var(--brand-primary-hover);
 }
 
 button:disabled {

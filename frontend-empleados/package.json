@@ -5,7 +5,9 @@
   "scripts": {
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
-    "test": "ng test"
+    "test": "ng test",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   },
   "dependencies": {
     "@angular/common": "^21.0.0",
@@ -24,6 +26,7 @@
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
     "@types/jasmine": "^6.0.0",
+    "cypress": "^15.13.0",
     "jasmine-core": "^6.1.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",

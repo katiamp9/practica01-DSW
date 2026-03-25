@@ -13,51 +13,65 @@
 
 .panel-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
+  padding: 1rem 1.25rem;
+}
+
+.gh-header {
+  background: var(--header-bg);
+  color: var(--header-fg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-box) var(--radius-box) 0 0;
 }
 
 .eyebrow {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--header-link-muted);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
+.gh-header p {
+  margin: 0.2rem 0 0;
+  color: var(--header-link-muted);
+}
+
 h1 {
   margin: 0.25rem 0;
-  font-size: 1.9rem;
+  font-size: 1.5rem;
 }
 
 .admin-nav {
   display: flex;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
+  background: var(--header-bg);
+  border: 1px solid var(--border-color);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-box) var(--radius-box);
+  padding: 0.55rem 1.25rem;
 }
 
 .admin-nav a {
   text-decoration: none;
-  color: var(--text-primary);
-  padding: 0.45rem 0.85rem;
-  border-radius: 0.6rem;
-  border: 1px solid var(--border-color);
+  color: var(--header-link-muted);
+  padding: 0.38rem 0.7rem;
+  border-radius: var(--radius-control);
+  border: 1px solid transparent;
 }
 
 .admin-nav a:hover,
 .admin-nav a.active-link {
-  background: var(--brand-primary);
-  color: #fff;
+  background: var(--header-link-active-bg);
+  color: var(--header-fg);
 }
 
 .card {
-  background: var(--surface-card);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
   padding: 1.25rem;
-  box-shadow: var(--shadow-soft);
 }
 
 .card-header {
@@ -99,9 +113,10 @@ h1 {
 
 .search-field input {
   border: 1px solid var(--border-color);
-  border-radius: 0.55rem;
+  border-radius: var(--radius-control);
   padding: 0.55rem 0.7rem;
   font: inherit;
+  background: #0d1117;
 }
 
 .search-note {
@@ -112,9 +127,9 @@ h1 {
 
 .state-block {
   padding: 1rem;
-  border-radius: 0.8rem;
+  border-radius: var(--radius-control);
   border: 1px solid var(--border-color);
-  background: var(--surface-bg);
+  background: var(--surface-card);
 }
 
 .state-block.error {
@@ -122,30 +137,13 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  border-color: #f85149;
+  background: rgba(248, 81, 73, 0.15);
+  color: #ff7b72;
 }
 
 .table-wrapper {
   overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead th {
-  text-align: left;
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border-color);
-  padding: 0.75rem;
-}
-
-tbody td {
-  padding: 0.8rem 0.75rem;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .actions-cell {
@@ -162,15 +160,12 @@ tbody td {
 }
 
 .btn {
-  border: 1px solid var(--border-color);
-  border-radius: 0.7rem;
-  padding: 0.55rem 0.95rem;
-  cursor: pointer;
+  font: inherit;
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--text-primary);
+  color: inherit;
 }
 
 .btn-primary {
