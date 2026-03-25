@@ -1,9 +1,9 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 → 1.1.0
+- Version change: 1.1.0 → 1.2.0
 - Modified principles:
 	- IV. Contrato API Primero con Swagger/OpenAPI → IV. Contrato API Versionado y Documentado
-	- V. Calidad Verificable y Entregables Reproducibles → V. Calidad Verificable y Compatibilidad Evolutiva
+	- V. Calidad Verificable y Compatibilidad Evolutiva (actualizada para Cypress obligatorio)
 - Added sections:
 	- Ninguna
 - Removed sections:
@@ -55,8 +55,10 @@ Rationale: el versionamiento por ruta permite evolución sin romper consumidores
 mantiene contratos explícitos por versión.
 
 ### V. Calidad Verificable y Compatibilidad Evolutiva
-Todo cambio MUST incluir pruebas automatizadas proporcionales al riesgo (mínimo:
-unitarias y de integración para flujos críticos de seguridad y persistencia).
+Todo cambio MUST incluir pruebas automatizadas proporcionales al riesgo. Para el
+frontend, el estándar obligatorio de validación de flujos de usuario CRUD MUST ser
+pruebas de Integración y E2E con Cypress. Jasmine/Karma deja de ser el estándar de
+validación para Definition of Done de flujos de usuario.
 Antes de merge, el pipeline MUST validar build, tests y arranque básico del stack
 Docker. Todo endpoint HTTP GET que retorne colecciones MUST implementar paginación y
 ordenamiento usando estándar Spring Data JPA `Pageable`, aceptando los parámetros
@@ -75,6 +77,9 @@ Rationale: estabilidad continua y reducción de regresiones.
 	acceder a Swagger UI.
 - El frontend del proyecto MUST ubicarse en `/frontend-empleados` y nuevas piezas
 	MUST usar Angular Standalone Components, Signals y Control Flow nativo.
+- Los flujos de usuario frontend MUST validarse con Cypress en
+	`frontend-empleados/cypress/e2e/`, incluyendo escenarios CRUD y errores de negocio
+	críticos (por ejemplo `409 Conflict` al borrar entidades en uso).
 - Las rutas de API MUST mantener prefijo versionado `/api/v{n}`; cambios de versión
 	MUST publicarse como nueva versión de ruta.
 - Los endpoints GET de colecciones MUST declarar y soportar `page`, `size` y `sort`
@@ -95,7 +100,8 @@ Rationale: estabilidad continua y reducción de regresiones.
 	4) versionamiento por prefijo `/api/v{n}` aplicado,
 	5) GET de colecciones con `Pageable` (`page`, `size`, `sort`),
 	6) documentación Swagger actualizada,
-	7) pruebas automatizadas pasando.
+	7) pruebas automatizadas pasando,
+	8) ejecución en verde de Cypress para flujos CRUD frontend.
 
 ## Governance
 
@@ -114,5 +120,7 @@ Cumplimiento:
 	documento.
 - Toda revisión de cumplimiento MUST verificar versionado de rutas API y paginación/
 	ordenamiento obligatorio en GET de colecciones.
+- Toda revisión de cumplimiento frontend MUST verificar que Cypress pasa en verde y
+	que los escenarios críticos de UX/error estén cubiertos.
 
-**Version**: 1.1.0 | **Ratified**: 2026-02-25 | **Last Amended**: 2026-03-04
+**Version**: 1.2.0 | **Ratified**: 2026-02-25 | **Last Amended**: 2026-03-25

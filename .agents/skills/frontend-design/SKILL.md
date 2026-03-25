@@ -40,3 +40,11 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 **IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
 
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+## Testability with Cypress
+
+When implementing GitHub-inspired UI/CSS, design decisions MUST remain testable in Cypress:
+- Preserve stable selectors for critical user flows using deterministic attributes (e.g., `data-cy`), especially for CRUD actions, modals, toasts, and table rows.
+- Do not couple Cypress assertions to fragile decorative class names that may change during visual refinements.
+- For dark theme implementations, ensure selectors allow Cypress checks for key theme tokens/state (background, text contrast, actionable buttons) without depending on brittle DOM position.
+- Any major visual refactor should keep existing Cypress selectors backward-compatible or include coordinated Cypress spec updates in the same change.
