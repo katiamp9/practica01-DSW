@@ -1,0 +1,15 @@
+<section class="home-layout">
+  <header class="home-header">
+    <div>
+      <p class="eyebrow">Portal empleado</p>
+      <h1>Inicio</h1>
+      <p>Hola, {{ nombre() || 'Usuario' }}.</p>
+    </div>
+    <button type="button" class="btn btn-primary gh-btn gh-btn-primary" (click)="logout()">Cerrar sesión</button>
+  </header>
+
+  <article class="card gh-box">
+    <h2>Sesión activa</h2>
+    <p>Tienes acceso a la vista protegida de usuario con ROLE_USER.</p>
+  </article>
+</section>

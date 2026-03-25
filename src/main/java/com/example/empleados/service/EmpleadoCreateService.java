@@ -51,6 +51,7 @@ public class EmpleadoCreateService {
             empleado.setDireccion(request.direccion().trim());
             empleado.setTelefono(request.telefono().trim());
             empleado.setDepartamento(departamento);
+            empleado.setRol(Roles.ROLE_USER);
 
             try {
                 Empleado savedEmpleado = empleadoRepository.save(empleado);

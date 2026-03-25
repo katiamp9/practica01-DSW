@@ -3,6 +3,9 @@ package com.example.empleados.controller;
 import com.example.empleados.controller.dto.EmpleadoDtos;
 import com.example.empleados.domain.Empleado;
 import com.example.empleados.service.EmpleadoCreateService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +24,13 @@ public class EmpleadoCreateController {
         this.createService = createService;
     }
 
+    @Operation(summary = "Crear empleado", description = "Crea empleado con clave autogenerada por backend en formato EMP- + secuencia.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Empleado creado"),
+        @ApiResponse(responseCode = "400", description = "Solicitud inválida"),
+        @ApiResponse(responseCode = "401", description = "No autenticado"),
+        @ApiResponse(responseCode = "409", description = "Colisión de clave autogenerada")
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EmpleadoDtos.EmpleadoResponse create(@Valid @RequestBody EmpleadoDtos.EmpleadoCreateRequest request) {

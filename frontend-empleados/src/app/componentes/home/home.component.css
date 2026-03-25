@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+
+.home-layout {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+h1 {
+  margin: 0.25rem 0;
+  font-size: 1.9rem;
+}
+
+.card {
+  padding: 1.25rem;
+}
+
+.btn {
+  font: inherit;
+}
+
+.btn-primary {
+  background: var(--brand-primary);
+  color: var(--header-fg);
+}

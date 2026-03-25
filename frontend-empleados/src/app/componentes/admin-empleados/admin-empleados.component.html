@@ -1,0 +1,103 @@
+<section class="panel-layout">
+  <header class="panel-header gh-header">
+    <div>
+      <p class="eyebrow">Administración</p>
+      <h1>Gestión de empleados</h1>
+      <p>Bienvenido, {{ nombre() || 'Administrador' }}.</p>
+    </div>
+    <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" (click)="logout()">Cerrar sesión</button>
+  </header>
+
+  <nav class="admin-nav" aria-label="Navegación administrativa">
+    <a routerLink="/admin-dashboard" routerLinkActive="active-link">Inicio</a>
+    <a routerLink="/admin/empleados" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Empleados</a>
+    <a routerLink="/admin/departamentos" routerLinkActive="active-link">Departamentos</a>
+  </nav>
+
+  <article class="card gh-box">
+    <div class="card-header">
+      <div>
+        <h2>Listado de empleados</h2>
+        <p class="meta" *ngIf="status() === 'data'">
+          <span class="gh-badge">{{ totalElements() }}</span>
+          empleados registrados
+        </p>
+      </div>
+      <button type="button" class="btn btn-primary gh-btn gh-btn-primary" (click)="openCreateForm()">Nuevo empleado</button>
+    </div>
+
+    <app-empleado-form
+      *ngIf="formVisible()"
+      [mode]="formMode()"
+      [empleado]="editingEmpleado()"
+      [departamentos]="departamentos()"
+      [loadingDepartamentos]="loadingDepartamentos()"
+      [showNoDepartmentsWarning]="showNoDepartmentsWarning()"
+      [submitting]="submitting()"
+      [operationError]="formOperationError()"
+      (canceled)="closeForm()"
+      (submitted)="submitForm($event)"
+    />
+
+    <div class="state-block" *ngIf="status() === 'loading'">
+      <p>Cargando empleados...</p>
+    </div>
+
+    <div class="state-block empty" *ngIf="status() === 'empty'">
+      <p>No hay empleados para mostrar por ahora.</p>
+    </div>
+
+    <div class="state-block error" *ngIf="status() === 'error'">
+      <p>{{ errorMessage() }}</p>
+      <button type="button" class="btn btn-primary gh-btn gh-btn-primary" (click)="retry()">Reintentar</button>
+    </div>
+
+    <div class="table-wrapper" *ngIf="status() === 'data'">
+      <table class="gh-table">
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Departamento</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let empleado of empleados(); trackBy: trackByClave">
+            <td>{{ empleado.clave }}</td>
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.email || 'Sin correo' }}</td>
+            <td>{{ getDepartamentoNombre(empleado.departamentoId) }}</td>
+            <td class="actions-cell">
+              <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" (click)="openEditForm(empleado)">Editar</button>
+              @if (empleado && canDelete(empleado)) {
+                <button type="button" class="btn btn-danger gh-btn" (click)="requestDelete(empleado)">Eliminar</button>
+              }
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-controls">
+        <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" [disabled]="!hasPrevious()" (click)="previousPage()">Anterior</button>
+        <span>Página {{ currentPage() + 1 }} de {{ totalPages() || 1 }}</span>
+        <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Siguiente</button>
+      </div>
+    </div>
+  </article>
+
+  <app-confirm-delete-dialog
+    [visible]="confirmacion().visible"
+    [empleadoNombre]="confirmacion().nombre || ''"
+    (canceled)="cancelDelete()"
+    (confirmed)="confirmDelete()"
+  />
+
+  <app-ui-toast
+    *ngIf="toastMessage()"
+    [message]="toastMessage() || ''"
+    [variant]="toastVariant()"
+    (dismissed)="dismissToast()"
+  />
+</section>

@@ -1,0 +1,42 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 40;
+}
+
+.dialog {
+  width: min(92vw, 460px);
+  border-radius: var(--radius-box);
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-control);
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+}
+
+.btn.secondary {
+  background: color-mix(in srgb, var(--surface-card) 78%, var(--border-color));
+  color: var(--text-primary);
+}
+
+.btn.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}

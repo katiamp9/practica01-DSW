@@ -1,0 +1,10 @@
+<div class="dialog-backdrop" *ngIf="visible">
+  <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <h2 id="confirm-title">Confirmar eliminación</h2>
+    <p>¿Deseas eliminar al empleado <strong>{{ empleadoNombre || 'seleccionado' }}</strong>?</p>
+    <div class="actions">
+      <button type="button" class="btn secondary" (click)="onCancel()">Cancelar</button>
+      <button type="button" class="btn danger" (click)="onConfirm()">Eliminar</button>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,80 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 45;
+}
+
+.modal-card {
+  width: min(92vw, 520px);
+  border-radius: var(--radius-box);
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  padding: 1.25rem;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-header p {
+  margin: 0.4rem 0 0;
+  color: var(--text-muted);
+}
+
+.modal-form {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+input {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-control);
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+
+small,
+.error {
+  color: var(--danger);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-control);
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.btn-primary {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #fff;
+}

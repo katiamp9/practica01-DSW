@@ -1,0 +1,29 @@
+<div class="modal-backdrop" data-cy="departamento-modal-backdrop">
+  <section class="modal-card" data-cy="departamento-modal" role="dialog" aria-modal="true" aria-labelledby="departamento-modal-title">
+    <header class="modal-header">
+      <h3 id="departamento-modal-title">
+        {{ mode === 'create' ? 'Crear departamento' : 'Editar departamento' }}
+      </h3>
+      <p>Completa el nombre del área para guardar los cambios.</p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-form">
+      <label>
+        <span>Nombre *</span>
+        <input type="text" data-cy="departamento-modal-nombre" formControlName="nombre" />
+        <small *ngIf="form.controls.nombre.touched && form.controls.nombre.hasError('required')">
+          El nombre es obligatorio.
+        </small>
+      </label>
+
+      <p class="error" *ngIf="operationError">{{ operationError }}</p>
+
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" data-cy="departamento-modal-cancel" (click)="onCancel()" [disabled]="submitting">Cancelar</button>
+        <button type="submit" class="btn btn-primary" data-cy="departamento-modal-submit" [disabled]="submitting">
+          {{ submitting ? 'Guardando...' : mode === 'create' ? 'Crear' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

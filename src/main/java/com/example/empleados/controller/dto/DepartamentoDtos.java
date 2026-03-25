@@ -20,4 +20,11 @@ public final class DepartamentoDtos {
         String nombre
     ) {
     }
+
+    public record DepartamentoListResponse(
+        Long id,
+        String nombre,
+        Long totalEmpleados
+    ) {
+    }
 }

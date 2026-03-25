@@ -2,6 +2,7 @@ package com.example.empleados.service;
 
 import com.example.empleados.controller.dto.DepartamentoDtos;
 import com.example.empleados.domain.Departamento;
+import com.example.empleados.repository.DepartamentoListaProjection;
 import com.example.empleados.repository.DepartamentoRepository;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.springframework.data.domain.Page;
@@ -21,8 +22,8 @@ public class DepartamentoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Departamento> findAll(Pageable pageable) {
-        return departamentoRepository.findAll(pageable);
+    public Page<DepartamentoListaProjection> findAll(Pageable pageable) {
+        return departamentoRepository.findAllWithTotalEmpleados(pageable);
     }
 
     @Transactional(readOnly = true)

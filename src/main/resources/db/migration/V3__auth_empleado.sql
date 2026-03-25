@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS credenciales_empleado (
         ON DELETE CASCADE
 );
 
-INSERT INTO empleados (clave, prefijo, consecutivo, nombre, direccion, telefono)
-VALUES ('EMP-1001', 'EMP-', 1001, 'Administrador Inicial', 'N/A', 'N/A')
+INSERT INTO empleados (clave, prefijo, consecutivo, nombre, direccion, telefono, rol)
+VALUES ('EMP-1001', 'EMP-', 1001, 'Administrador Inicial', 'N/A', 'N/A', 'ROLE_ADMIN')
 ON CONFLICT (clave) DO NOTHING;
 
 INSERT INTO cuentas_empleado (correo, empleado_clave)

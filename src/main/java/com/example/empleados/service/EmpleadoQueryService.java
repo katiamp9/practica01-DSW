@@ -1,7 +1,7 @@
 package com.example.empleados.service;
 
-import com.example.empleados.domain.Empleado;
 import com.example.empleados.repository.EmpleadoRepository;
+import com.example.empleados.repository.EmpleadoListProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,12 @@ public class EmpleadoQueryService {
         this.empleadoRepository = empleadoRepository;
     }
 
-    public Page<Empleado> findAll(Pageable pageable) {
-        return empleadoRepository.findAll(pageable);
+    public Page<EmpleadoListProjection> findAll(Pageable pageable) {
+        return empleadoRepository.findAllWithEmail(pageable);
     }
 
-    public Empleado findByClave(String clave) {
-        return empleadoRepository.findById(clave)
+    public EmpleadoListProjection findByClave(String clave) {
+        return empleadoRepository.findWithEmailByClave(clave)
             .orElseThrow(() -> new EmpleadoNotFoundException(clave));
     }
 }
