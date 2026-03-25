@@ -9,10 +9,11 @@
 
 .dialog {
   width: min(92vw, 460px);
-  border-radius: 0.75rem;
-  background: #fff;
+  border-radius: var(--radius-box);
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
   padding: 1.25rem;
-  box-shadow: 0 20px 35px rgba(15, 23, 42, 0.2);
+  box-shadow: var(--shadow-soft);
 }
 
 .actions {
@@ -23,17 +24,19 @@
 }
 
 .btn {
-  border: 0;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-control);
+  padding: 0.55rem 0.95rem;
   cursor: pointer;
 }
 
 .btn.secondary {
-  background: #e2e8f0;
+  background: color-mix(in srgb, var(--surface-card) 78%, var(--border-color));
+  color: var(--text-primary);
 }
 
 .btn.danger {
-  background: #dc2626;
+  background: var(--danger);
+  border-color: var(--danger);
   color: #fff;
 }

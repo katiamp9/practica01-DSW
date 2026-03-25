@@ -9,7 +9,7 @@
 
 .modal-card {
   width: min(92vw, 520px);
-  border-radius: 1rem;
+  border-radius: var(--radius-box);
   background: var(--surface-card);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-soft);
@@ -43,9 +43,11 @@ span {
 
 input {
   border: 1px solid var(--border-color);
-  border-radius: 0.55rem;
+  border-radius: var(--radius-control);
   padding: 0.55rem 0.7rem;
   font: inherit;
+  background: var(--surface-bg);
+  color: var(--text-primary);
 }
 
 small,
@@ -61,7 +63,7 @@ small,
 
 .btn {
   border: 1px solid var(--border-color);
-  border-radius: 0.7rem;
+  border-radius: var(--radius-control);
   padding: 0.55rem 0.95rem;
   cursor: pointer;
 }
