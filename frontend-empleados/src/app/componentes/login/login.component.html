@@ -1,5 +1,5 @@
 <section class="login-layout">
-  <article class="login-card">
+  <article class="login-card gh-box">
     <header>
       <p class="eyebrow">Sistema de empleados</p>
       <h1>Iniciar sesión</h1>
@@ -23,7 +23,7 @@
         <p class="form-error">{{ errorMessage() }}</p>
       }
 
-      <button type="submit" [disabled]="loading()">{{ loading() ? 'Ingresando…' : 'Ingresar' }}</button>
+      <button type="submit" class="gh-btn gh-btn-primary" [disabled]="loading()">{{ loading() ? 'Ingresando…' : 'Ingresar' }}</button>
     </form>
   </article>
 </section>

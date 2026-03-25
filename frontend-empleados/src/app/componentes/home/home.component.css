@@ -13,7 +13,7 @@
 
 .home-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.5rem;
@@ -33,21 +33,14 @@ h1 {
 }
 
 .card {
-  background: var(--surface-card);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
   padding: 1.25rem;
-  box-shadow: var(--shadow-soft);
 }
 
 .btn {
-  border: 0;
-  border-radius: 0.7rem;
-  padding: 0.55rem 0.95rem;
-  cursor: pointer;
+  font: inherit;
 }
 
 .btn-primary {
   background: var(--brand-primary);
-  color: #fff;
+  color: var(--header-fg);
 }
