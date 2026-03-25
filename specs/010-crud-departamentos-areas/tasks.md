@@ -16,8 +16,8 @@
 - [X] T003 [P] Crear modelo de estado reactivo de lista en frontend-empleados/src/app/modelos/departamento-list-state.model.ts
 - [X] T004 [P] Crear modelo de estado del modal de formulario en frontend-empleados/src/app/modelos/departamento-form-state.model.ts
 - [X] T005 Crear servicio HTTP de departamentos en frontend-empleados/src/app/servicios/departamento.service.ts
-- [X] T006 [P] Crear pruebas base del servicio de departamentos en frontend-empleados/src/app/servicios/departamento.service.spec.ts
-- [X] T048 [P] Agregar prueba de solicitudes protegidas (Basic Auth vía interceptor/credenciales) para endpoints de departamentos en frontend-empleados/src/app/servicios/departamento.service.spec.ts
+- [X] T006 [P] Crear base de pruebas de integración/E2E para departamentos en frontend-empleados/cypress/e2e/departamentos-crud.cy.ts
+- [X] T048 [P] Agregar prueba Cypress de solicitudes protegidas (Basic Auth vía interceptor/credenciales) para endpoints de departamentos en frontend-empleados/cypress/e2e/departamentos-auth.cy.ts
 
 ---
 
@@ -52,7 +52,7 @@
 
 - [X] T015 [P] [US1] Cubrir create/update/delete exitosos en src/test/java/com/example/empleados/service/DepartamentoServiceTest.java
 - [X] T016 [P] [US1] Cubrir contrato de respuesta de listado con `totalEmpleados` en src/test/java/com/example/empleados/controller/DepartamentoControllerIntegrationTest.java
-- [X] T017 [P] [US1] Cubrir flujo CRUD de departamentos en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.component.spec.ts
+- [X] T017 [P] [US1] Cubrir flujo CRUD de departamentos con Cypress en frontend-empleados/cypress/e2e/departamentos-crud.cy.ts
 
 ### Implementation for User Story 1
 
@@ -76,8 +76,8 @@
 
 ### Tests for User Story 2
 
-- [X] T025 [P] [US2] Cubrir apertura/cierre y modos create/edit del modal en frontend-empleados/src/app/componentes/departamento-form-modal/departamento-form-modal.component.spec.ts
-- [X] T026 [P] [US2] Cubrir filtro local reactivo con Signals en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.search.spec.ts
+- [X] T025 [P] [US2] Cubrir apertura/cierre y modos create/edit del modal con Cypress en frontend-empleados/cypress/e2e/departamento-form-modal.cy.ts
+- [X] T026 [P] [US2] Cubrir filtro local reactivo con Signals usando Cypress en frontend-empleados/cypress/e2e/departamentos-busqueda-local.cy.ts
 
 ### Implementation for User Story 2
 
@@ -89,7 +89,7 @@
 - [X] T032 [US2] Implementar Search Bar reactivo con Signals usando `computed(() => ...)` para derivar `filteredItems` en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.component.ts
 - [X] T033 [US2] Renderizar barra de búsqueda, estado vacío por filtro y nota visual de filtro aplicado sobre la página cargada en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.component.html
 - [X] T046 [US2] Implementar confirmación de descarte al cerrar/cancelar modal con formulario dirty en frontend-empleados/src/app/componentes/departamento-form-modal/departamento-form-modal.component.ts
-- [X] T047 [P] [US2] Cubrir confirmación de cambios sin guardar (descartar/continuar edición) en frontend-empleados/src/app/componentes/departamento-form-modal/departamento-form-modal.component.spec.ts
+- [X] T047 [P] [US2] Cubrir confirmación de cambios sin guardar (descartar/continuar edición) con Cypress en frontend-empleados/cypress/e2e/departamento-form-discard-confirm.cy.ts
 
 **Checkpoint**: US2 completa y validable sin dependencia de US3.
 
@@ -104,7 +104,7 @@
 ### Tests for User Story 3
 
 - [X] T034 [P] [US3] Cubrir rechazo `409 Conflict` por departamento en uso en src/test/java/com/example/empleados/service/DepartamentoServiceTest.java
-- [X] T035 [P] [US3] Cubrir mapeo de error delete→toast en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.delete-protected.spec.ts
+- [X] T035 [P] [US3] Cubrir mapeo de error delete→toast con Cypress en frontend-empleados/cypress/e2e/departamentos-delete-conflict-409.cy.ts
 
 ### Implementation for User Story 3
 
@@ -129,6 +129,7 @@
 - [X] T044 [P] Validar OpenAPI de endpoints de departamentos y códigos de error en src/main/java/com/example/empleados/controller/DepartamentoController.java
 - [X] T045 Confirmar trazabilidad FR→tasks en specs/010-crud-departamentos-areas/tasks.md
 - [X] T052 [P] Consolidar y verificar en spec/contract/quickstart una sola redacción de mensaje para conflicto `409` en specs/010-crud-departamentos-areas/
+- [X] T053 Ejecutar suite Cypress en verde y registrar Definition of Done (modo oscuro + eliminación con `409 Conflict`) en frontend-empleados/cypress/e2e/departamentos-darkmode.cy.ts y frontend-empleados/cypress/e2e/departamentos-delete-conflict-409.cy.ts
 
 ---
 
@@ -168,7 +169,7 @@ Task: "T016 [US1] Cubrir contrato de respuesta de listado con totalEmpleados en 
 ```bash
 Task: "T028 [US2] Crear template del modal de formulario en frontend-empleados/src/app/componentes/departamento-form-modal/departamento-form-modal.component.html"
 Task: "T029 [US2] Diseñar estilos modernos del modal en frontend-empleados/src/app/componentes/departamento-form-modal/departamento-form-modal.component.css"
-Task: "T026 [US2] Cubrir filtro local reactivo con Signals en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.search.spec.ts"
+Task: "T026 [US2] Cubrir filtro local reactivo con Signals usando Cypress en frontend-empleados/cypress/e2e/departamentos-busqueda-local.cy.ts"
 ```
 
 ### User Story 3
@@ -176,7 +177,7 @@ Task: "T026 [US2] Cubrir filtro local reactivo con Signals en frontend-empleados
 ```bash
 Task: "T038 [US3] Deshabilitar visualmente botón eliminar cuando totalEmpleados > 0 en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.component.html"
 Task: "T040 [US3] Estilizar estado deshabilitado + tooltip en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.component.css"
-Task: "T035 [US3] Cubrir mapeo de error delete→toast en frontend-empleados/src/app/componentes/admin-departamentos/admin-departamentos.delete-protected.spec.ts"
+Task: "T035 [US3] Cubrir mapeo de error delete→toast con Cypress en frontend-empleados/cypress/e2e/departamentos-delete-conflict-409.cy.ts"
 ```
 
 ---
@@ -213,6 +214,7 @@ Task: "T035 [US3] Cubrir mapeo de error delete→toast en frontend-empleados/src
 - **US1**: CRUD de departamentos operativo con tabla paginada y columna `Personal` basada en `totalEmpleados`.
 - **US2**: Modal reutilizable moderno para create/edit con confirmación de cambios sin guardar y búsqueda local por nombre con Signals sin requests extra.
 - **US3**: Borrado protegido (`409`) con botón deshabilitado + tooltip cuando hay personal, y toast específico al capturar error de integridad.
+- **Definition of Done**: Suite Cypress en verde, incluyendo validación de modo oscuro y camino de error `409 Conflict` en eliminación.
 
 ---
 
