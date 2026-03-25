@@ -1,6 +1,6 @@
 # practica01 Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-03-24
+Auto-generated from all feature plans. Last updated: 2026-03-25
 
 ## Active Technologies
 - PostgreSQL 16 (archive-001-crud-empleados)
@@ -22,6 +22,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-24
 - Java 17 (backend), TypeScript 5.9 (frontend Angular 21) + Spring Boot 3.3.2 (Web, Data JPA, Security, Validation), Flyway, PostgreSQL driver, springdoc OpenAPI 2.6.0, Angular 21, RxJS 7.8 (009-crud-empleados-completo)
 - PostgreSQL (principal), H2 (pruebas) (009-crud-empleados-completo)
 - Java 17 (backend), TypeScript 5.9 + Angular 21 (frontend) + Spring Boot 3.3.2 (Web, Data JPA, Security, Validation), PostgreSQL driver, springdoc OpenAPI, Angular Signals, Reactive Forms, HttpClient, RxJS 7.8 (010-crud-departamentos-areas)
+- TypeScript 5.9 + Angular 21 (frontend), Java 17 + Spring Boot 3.3.x (backend existente) + Angular Standalone Components, Signals, Control Flow nativo, CSS global en `styles.css`, Spring Security Basic Auth, Spring Data JPA Pageable (011-redesign-github-experience)
+- PostgreSQL (backend, sin cambios de esquema) (011-redesign-github-experience)
 
 - Java 17 + Spring Boot 3.x, Spring Security (Basic Auth), Spring Data JPA, springdoc-openapi, Flyway (archive-001-crud-empleados)
 
@@ -42,9 +44,9 @@ tests/
 Java 17: Follow standard conventions
 
 ## Recent Changes
+- 011-redesign-github-experience: Added TypeScript 5.9 + Angular 21 (frontend), Java 17 + Spring Boot 3.3.x (backend existente) + Angular Standalone Components, Signals, Control Flow nativo, CSS global en `styles.css`, Spring Security Basic Auth, Spring Data JPA Pageable
+- 011-redesign-github-experience: Added TypeScript 5.9 + Angular 21 (frontend), Java 17 + Spring Boot 3.3.x (backend existente) + Angular Standalone Components, Signals, Control Flow nativo, CSS global en `styles.css`, Spring Security Basic Auth, Spring Data JPA Pageable
 - 010-crud-departamentos-areas: Added Java 17 (backend), TypeScript 5.9 + Angular 21 (frontend) + Spring Boot 3.3.2 (Web, Data JPA, Security, Validation), PostgreSQL driver, springdoc OpenAPI, Angular Signals, Reactive Forms, HttpClient, RxJS 7.8
-- 009-crud-empleados-completo: Added Java 17 (backend), TypeScript 5.9 (frontend Angular 21) + Spring Boot 3.3.2 (Web, Data JPA, Security, Validation), Flyway, PostgreSQL driver, springdoc OpenAPI 2.6.0, Angular 21, RxJS 7.8
-- 009-crud-empleados-completo: Added Java 17 (backend), TypeScript 5.9 + Angular 21 (frontend) + Spring Boot 3.x, Spring Security (Basic Auth), Spring Data JPA, Flyway, PostgreSQL, Angular Standalone Components, Angular Signals, RxJS, HttpClient
 
 
 <!-- MANUAL ADDITIONS START -->
