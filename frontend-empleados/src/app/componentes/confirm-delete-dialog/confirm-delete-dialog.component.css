@@ -2,9 +2,12 @@
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: grid;
   place-items: center;
   z-index: 40;
+  animation: backdrop-fade-in 0.22s ease both;
 }
 
 .dialog {
@@ -14,6 +17,7 @@
   border: 1px solid var(--border-color);
   padding: 1.25rem;
   box-shadow: var(--shadow-soft);
+  animation: modal-pop-in 0.28s ease both;
 }
 
 .actions {
@@ -39,4 +43,26 @@
   background: var(--danger);
   border-color: var(--danger);
   color: #fff;
+}
+
+@keyframes modal-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

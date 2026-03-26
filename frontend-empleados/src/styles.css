@@ -1,5 +1,7 @@
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   --surface-bg: #0d1117;
   --surface-card: #161b22;
   --text-primary: #c9d1d9;
@@ -23,32 +25,39 @@ body {
   background: var(--surface-bg);
   color: var(--text-primary);
   font-family: inherit;
+  font-size: 16px;
+  line-height: 1.55;
 }
 
 .gh-box {
   background: var(--surface-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-box);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-soft), 0 0 15px rgba(46, 164, 79, 0.3);
 }
 
 .gh-btn {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-control);
-  padding: 0.55rem 0.95rem;
+  padding: 0.68rem 1.12rem;
   cursor: pointer;
   font: inherit;
+  font-size: 1rem;
 }
 
 .gh-btn-primary {
   background: var(--brand-primary);
   border-color: var(--brand-primary);
   color: #ffffff;
+  transition: transform 0.3s ease, filter 0.3s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .gh-btn-primary:hover:enabled {
   background: var(--brand-primary-hover);
   border-color: var(--brand-primary-hover);
+  transform: scale(1.04);
+  filter: brightness(1.08);
+  box-shadow: 0 0 15px rgba(46, 164, 79, 0.3);
 }
 
 .gh-btn-secondary {
@@ -68,22 +77,29 @@ body {
 .gh-table thead th {
   background: #161b22;
   text-align: left;
-  font-size: 0.75rem;
+  font-size: 0.86rem;
   letter-spacing: 0.04em;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
   border-bottom: 1px solid var(--border-color);
-  padding: 0.75rem;
+  padding: 0.92rem 0.88rem;
 }
 
 .gh-table tbody td {
-  padding: 0.8rem 0.75rem;
+  padding: 0.98rem 0.88rem;
   border-bottom: 1px solid var(--border-color);
+  font-size: 1rem;
+}
+
+.gh-table tbody tr {
+  transition: all 0.3s ease;
 }
 
 .gh-table tbody tr:hover {
-  background: #1f2630;
+  background: #1d2129;
+  box-shadow: 0 8px 18px rgba(1, 4, 9, 0.4), inset 3px 0 0 #2ea44f;
+  transform: translateY(-1px);
 }
 
 .gh-badge {
@@ -92,11 +108,21 @@ body {
   justify-content: center;
   min-width: 1.35rem;
   border-radius: 999px;
-  padding: 0.12rem 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.58rem;
+  font-size: 0.84rem;
   font-weight: 600;
   background: #21262d;
   color: var(--text-muted);
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 1.45rem;
+  line-height: 1.25;
 }
 
 .gh-status-error {
@@ -124,6 +150,69 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(35, 134, 54, 0.2);
+  box-shadow: 0 0 0 3px rgba(35, 134, 54, 0.24), 0 0 14px rgba(46, 164, 79, 0.28);
   outline: none;
+}
+
+.panel-layout {
+  animation: page-fade-in 0.36s ease;
+}
+
+.skeleton-block {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--surface-card) 82%, #0d1117);
+  padding: 0.9rem;
+  margin: 0.7rem 0;
+}
+
+.skeleton-line {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #222933;
+}
+
+.skeleton-line::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  animation: skeleton-shimmer 1.2s infinite;
+}
+
+.skeleton-title {
+  height: 1.1rem;
+  width: 180px;
+  margin-bottom: 0.8rem;
+}
+
+.skeleton-toolbar {
+  height: 2.2rem;
+  width: min(360px, 100%);
+  margin-bottom: 0.9rem;
+}
+
+.skeleton-row {
+  height: 1.3rem;
+  margin-top: 0.65rem;
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
