@@ -84,8 +84,8 @@ class DepartamentoControllerIntegrationTest {
                 .param("sort", "nombre,asc")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123")))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.number").value(0))
-            .andExpect(jsonPath("$.size").value(20))
+            .andExpect(jsonPath("$.page.number").value(0))
+            .andExpect(jsonPath("$.page.size").value(20))
             .andExpect(jsonPath("$.content[0].id").value(1))
                 .andExpect(jsonPath("$.content[0].nombre").value("Sistemas"))
                 .andExpect(jsonPath("$.content[0].totalEmpleados").value(2));

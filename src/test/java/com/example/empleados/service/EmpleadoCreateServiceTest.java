@@ -4,6 +4,7 @@ import com.example.empleados.controller.dto.EmpleadoDtos;
 import com.example.empleados.domain.CuentaEmpleado;
 import com.example.empleados.domain.Departamento;
 import com.example.empleados.domain.Empleado;
+import com.example.empleados.repository.CuentaEmpleadoRepository;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class EmpleadoCreateServiceTest {
     private EmpleadoRepository empleadoRepository;
 
     @Mock
+    private CuentaEmpleadoRepository cuentaEmpleadoRepository;
+
+    @Mock
     private EmpleadoValidationService validationService;
 
     @Mock
@@ -48,6 +52,7 @@ class EmpleadoCreateServiceTest {
     void setUp() {
         createService = new EmpleadoCreateService(
             empleadoRepository,
+            cuentaEmpleadoRepository,
             validationService,
             departamentoValidationService,
             claveGenerator,
@@ -59,6 +64,7 @@ class EmpleadoCreateServiceTest {
         departamento.setNombre("Sistemas");
 
         when(departamentoValidationService.requireDepartamento(1L)).thenReturn(departamento);
+        when(cuentaEmpleadoRepository.existsByEmpleadoClave(any())).thenReturn(false);
     }
 
     @Test
@@ -114,6 +120,32 @@ class EmpleadoCreateServiceTest {
         assertEquals("EMP-1003", result.getClave());
         verify(claveGenerator, times(3)).generate();
         verify(empleadoRepository, times(3)).save(any(Empleado.class));
+        verifyNoInteractions(credencialEmpleadoService);
+    }
+
+    @Test
+    void create_shouldSkipGeneratedKeyWhenAlreadyExistsInCuentaEmpleado() {
+        EmpleadoDtos.EmpleadoCreateRequest request = new EmpleadoDtos.EmpleadoCreateRequest(
+            "Ana",
+            "Calle 1",
+            "555-0101",
+            1L,
+            null
+        );
+
+        when(claveGenerator.generate())
+            .thenReturn(new ClaveEmpleadoGenerator.ClaveGenerada("EMP-", 1001L, "EMP-1001"))
+            .thenReturn(new ClaveEmpleadoGenerator.ClaveGenerada("EMP-", 1002L, "EMP-1002"));
+
+        when(cuentaEmpleadoRepository.existsByEmpleadoClave("EMP-1001")).thenReturn(true);
+        when(cuentaEmpleadoRepository.existsByEmpleadoClave("EMP-1002")).thenReturn(false);
+        when(empleadoRepository.save(any(Empleado.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Empleado result = createService.create(request);
+
+        assertEquals("EMP-1002", result.getClave());
+        verify(claveGenerator, times(2)).generate();
+        verify(empleadoRepository, times(1)).save(any(Empleado.class));
         verifyNoInteractions(credencialEmpleadoService);
     }
 
