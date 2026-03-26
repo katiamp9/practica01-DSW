@@ -1,4 +1,4 @@
-# Frontend Empleados
+# Frontend Empleados .
 
 Base de frontend para integración con backend Spring Boot.
 
