@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
 import { DepartamentoFormPayload, DepartamentoFormModalComponent } from '../departamento-form-modal/departamento-form-modal.component';
 import { UiToastComponent } from '../ui-toast/ui-toast.component';
 import { DepartamentoGestion } from '../../modelos/departamento-gestion.model';
@@ -15,7 +16,7 @@ const DELETE_CONFLICT_TOAST = 'No se puede eliminar: existen empleados asociados
 @Component({
   selector: 'app-admin-departamentos',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, DepartamentoFormModalComponent, UiToastComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, DepartamentoFormModalComponent, ConfirmDeleteDialogComponent, UiToastComponent],
   templateUrl: './admin-departamentos.component.html',
   styleUrl: './admin-departamentos.component.css'
 })
@@ -39,6 +40,12 @@ export class AdminDepartamentosComponent {
   readonly editingDepartamento = signal<DepartamentoGestion | null>(null);
   readonly submitting = signal(false);
   readonly formOperationError = signal<string | null>(null);
+
+  readonly confirmacionDelete = signal<{ visible: boolean; id: number | null; nombre: string | null }>({
+    visible: false,
+    id: null,
+    nombre: null
+  });
 
   readonly toastMessage = signal<string | null>(null);
   readonly toastVariant = signal<'success' | 'error' | 'warning'>('success');
@@ -160,16 +167,36 @@ export class AdminDepartamentosComponent {
       return;
     }
 
-    if (!window.confirm(`¿Deseas eliminar el departamento ${departamento.nombre}?`)) {
+    this.confirmacionDelete.set({
+      visible: true,
+      id: departamento.id,
+      nombre: departamento.nombre
+    });
+  }
+
+  cancelDeleteConfirm(): void {
+    this.confirmacionDelete.set({
+      visible: false,
+      id: null,
+      nombre: null
+    });
+  }
+
+  confirmDelete(): void {
+    const departamentoId = this.confirmacionDelete().id;
+    if (departamentoId == null) {
+      this.cancelDeleteConfirm();
       return;
     }
 
-    this.departamentoService.delete(departamento.id).subscribe({
+    this.departamentoService.delete(departamentoId).subscribe({
       next: () => {
+        this.cancelDeleteConfirm();
         this.showToast('Departamento eliminado exitosamente.', 'success');
         this.loadPage(this.currentPage());
       },
       error: (error) => {
+        this.cancelDeleteConfirm();
         if (error instanceof HttpErrorResponse && error.status === 409) {
           this.showToast(DELETE_CONFLICT_TOAST, 'error');
           return;

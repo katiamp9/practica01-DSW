@@ -25,6 +25,7 @@
     "@angular/build": "^21.0.0",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
+    "@faker-js/faker": "^10.4.0",
     "@types/jasmine": "^6.0.0",
     "cypress": "^15.13.0",
     "jasmine-core": "^6.1.0",

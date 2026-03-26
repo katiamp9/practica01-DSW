@@ -52,7 +52,14 @@
     />
 
     <div class="state-block" *ngIf="status() === 'loading'">
-      <p>Cargando departamentos...</p>
+      <div class="skeleton-block" aria-hidden="true">
+        <div class="skeleton-line skeleton-title"></div>
+        <div class="skeleton-line skeleton-toolbar"></div>
+        <div class="skeleton-line skeleton-row"></div>
+        <div class="skeleton-line skeleton-row"></div>
+        <div class="skeleton-line skeleton-row"></div>
+        <div class="skeleton-line skeleton-row"></div>
+      </div>
     </div>
 
     <div class="state-block empty" *ngIf="status() === 'empty'">
@@ -104,6 +111,14 @@
       </div>
     </div>
   </article>
+
+  <app-confirm-delete-dialog
+    [visible]="confirmacionDelete().visible"
+    [empleadoNombre]="confirmacionDelete().nombre || ''"
+    itemLabel="el departamento"
+    (canceled)="cancelDeleteConfirm()"
+    (confirmed)="confirmDelete()"
+  />
 
   <app-ui-toast
     *ngIf="toastMessage()"
