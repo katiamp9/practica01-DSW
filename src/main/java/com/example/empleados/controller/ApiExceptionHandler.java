@@ -10,6 +10,7 @@ import com.example.empleados.service.ForbiddenOperationException;
 import com.example.empleados.service.InvalidPaginationException;
 import com.example.empleados.service.InvalidCredentialsException;
 import com.example.empleados.service.ValidationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -70,5 +71,14 @@ public class ApiExceptionHandler {
     public ResponseEntity<AuthDtos.ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(new AuthDtos.ErrorResponse("AUTH_INVALID_CREDENTIALS", ex.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<EmpleadoDtos.ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(new EmpleadoDtos.ErrorResponse(
+                "CONFLICT",
+                "No se pudo completar la operación por un conflicto de integridad de datos. Intenta nuevamente."
+            ));
     }
 }

@@ -60,7 +60,10 @@ export class AdminDepartamentosComponent {
   private readonly defaultSort = 'nombre,asc';
 
   constructor() {
-    this.loadPage(0);
+    const initialPage = this.readPageFromUrl();
+    this.currentPage.set(initialPage);
+    this.syncPageInUrl(initialPage);
+    this.loadPage(initialPage);
   }
 
   logout(): void {
@@ -124,7 +127,10 @@ export class AdminDepartamentosComponent {
           this.showToast('Departamento creado exitosamente.', 'success');
           this.submitting.set(false);
           this.formVisible.set(false);
-          this.loadPage(this.currentPage());
+          this.currentPage.set(0);
+          this.totalPages.set(0);
+          this.totalElements.set(0);
+          this.loadPage(0);
         },
         error: (error) => this.handleFormError(error)
       });
@@ -188,15 +194,34 @@ export class AdminDepartamentosComponent {
     return item.id ?? index;
   }
 
-  private loadPage(page: number): void {
+  private loadPage(page: number | undefined): void {
+    const safePage = this.normalizePage(page);
+
     this.status.set('loading');
     this.errorMessage.set('');
+    this.items.set([]);
+    this.syncPageInUrl(safePage);
 
-    this.departamentoService.list(page, this.pageSize, this.defaultSort).subscribe({
+    this.departamentoService.list(safePage, this.pageSize, this.defaultSort).subscribe({
       next: (response) => {
-        this.currentPage.set(response.number);
-        this.totalPages.set(response.totalPages);
-        this.totalElements.set(response.totalElements);
+        const pageFromResponse = (response as { number?: number | null; page?: { number?: number | null } }).number
+          ?? (response as { page?: { number?: number | null } }).page?.number
+          ?? safePage;
+        const totalPagesFromResponse = (response as { totalPages?: number | null; page?: { totalPages?: number | null } }).totalPages
+          ?? (response as { page?: { totalPages?: number | null } }).page?.totalPages
+          ?? 0;
+        const totalElementsFromResponse = (response as { totalElements?: number | null; page?: { totalElements?: number | null } }).totalElements
+          ?? (response as { page?: { totalElements?: number | null } }).page?.totalElements
+          ?? 0;
+
+        const resolvedPage = this.normalizePage(pageFromResponse);
+        const resolvedTotalPages = Math.max(0, Math.floor(totalPagesFromResponse));
+        const resolvedTotalElements = Math.max(0, Math.floor(totalElementsFromResponse));
+
+        this.currentPage.set(resolvedPage);
+        this.totalPages.set(resolvedTotalPages);
+        this.totalElements.set(resolvedTotalElements);
+        this.syncPageInUrl(resolvedPage);
 
         if (!response.content.length) {
           this.items.set([]);
@@ -212,6 +237,30 @@ export class AdminDepartamentosComponent {
         this.errorMessage.set('No pudimos cargar departamentos. Intenta nuevamente.');
       }
     });
+  }
+
+  private normalizePage(page: number | undefined): number {
+    if (typeof page !== 'number' || Number.isNaN(page) || page < 0) {
+      return 0;
+    }
+
+    return Math.floor(page);
+  }
+
+  private readPageFromUrl(): number {
+    const params = new URLSearchParams(window.location.search);
+    const rawPage = params.get('page');
+    if (!rawPage) {
+      return 0;
+    }
+
+    return this.normalizePage(Number(rawPage));
+  }
+
+  private syncPageInUrl(page: number): void {
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', String(page));
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
   }
 
   private handleFormError(error: unknown): void {

@@ -15,5 +15,7 @@ public interface CuentaEmpleadoRepository extends JpaRepository<CuentaEmpleado, 
 
     Optional<CuentaEmpleado> findByEmpleadoClave(String empleadoClave);
 
+    boolean existsByEmpleadoClave(String empleadoClave);
+
     boolean existsByCorreoIgnoreCase(String correo);
 }
