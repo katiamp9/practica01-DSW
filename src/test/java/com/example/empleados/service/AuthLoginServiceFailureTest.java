@@ -51,7 +51,7 @@ class AuthLoginServiceFailureTest {
     void login_shouldReturnUniformErrorWhenEmailDoesNotExist() {
         AuthDtos.LoginRequest request = new AuthDtos.LoginRequest(" NoExiste@empresa.com ", "admin123");
 
-        when(cuentaEmpleadoRepository.findByCorreoIgnoreCase(eq("noexiste@empresa.com")))
+        when(cuentaEmpleadoRepository.findWithEmpleadoByCorreoIgnoreCase(eq("noexiste@empresa.com")))
             .thenReturn(Optional.empty());
 
         InvalidCredentialsException exception = assertThrows(
@@ -76,7 +76,7 @@ class AuthLoginServiceFailureTest {
         CredencialEmpleado credencialEmpleado = new CredencialEmpleado();
         credencialEmpleado.setPasswordHash("$2y$10$hash");
 
-        when(cuentaEmpleadoRepository.findByCorreoIgnoreCase(eq("admin@empresa.com")))
+        when(cuentaEmpleadoRepository.findWithEmpleadoByCorreoIgnoreCase(eq("admin@empresa.com")))
             .thenReturn(Optional.of(cuentaEmpleado));
         when(credencialEmpleadoService.findCredentialByEmail(eq("admin@empresa.com")))
             .thenReturn(Optional.of(credencialEmpleado));

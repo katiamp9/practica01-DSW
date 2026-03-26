@@ -12,6 +12,7 @@ import com.example.empleados.service.EmpleadoQueryService;
 import com.example.empleados.service.EmpleadoUpdateService;
 import com.example.empleados.service.ForbiddenOperationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,20 @@ class EmpleadoControllerIntegrationTest {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("BAD_REQUEST"));
     }
+
+            @Test
+            void shouldReturnConflictWhenCreateHitsDataIntegrityViolation() throws Exception {
+            EmpleadoDtos.EmpleadoCreateRequest request = new EmpleadoDtos.EmpleadoCreateRequest("Ana", "Calle 1", "555-0101", 1L, null);
+            when(createService.create(any())).thenThrow(new DataIntegrityViolationException("duplicate key"));
+
+            mockMvc.perform(post("/api/v1/empleados")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("admin", "admin123"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("CONFLICT"))
+                .andExpect(jsonPath("$.message").value("No se pudo completar la operación por un conflicto de integridad de datos. Intenta nuevamente."));
+            }
 
     @Test
     void shouldListAndFindByClave() throws Exception {

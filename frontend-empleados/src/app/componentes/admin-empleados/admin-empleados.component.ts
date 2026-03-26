@@ -1,6 +1,7 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
@@ -20,15 +21,19 @@ import { EmpleadoService } from '../../servicios/empleado.service';
   templateUrl: './admin-empleados.component.html',
   styleUrl: './admin-empleados.component.css'
 })
-export class AdminEmpleadosComponent {
+export class AdminEmpleadosComponent implements OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly empleadoService = inject(EmpleadoService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
 
   readonly nombre = () => this.authService.nombre();
 
   readonly empleados = signal<EmpleadoGestion[]>([]);
   readonly status = signal<'loading' | 'data' | 'empty' | 'error'>('loading');
   readonly errorMessage = signal('');
+  readonly searchTerm = signal('');
 
   readonly departamentos = signal<DepartamentoOption[]>([]);
   readonly loadingDepartamentos = signal(false);
@@ -51,6 +56,21 @@ export class AdminEmpleadosComponent {
   readonly totalPages = signal(0);
   readonly totalElements = signal(0);
 
+  readonly filteredEmpleados = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    if (!term) {
+      return this.empleados();
+    }
+
+    return this.empleados().filter((empleado) => {
+      const nombre = empleado.nombre?.toLowerCase() ?? '';
+      const clave = empleado.clave?.toLowerCase() ?? '';
+      return nombre.includes(term) || clave.includes(term);
+    });
+  });
+
+  readonly hasSearch = computed(() => this.searchTerm().trim().length > 0);
+
   readonly hasPrevious = computed(() => this.currentPage() > 0);
   readonly hasNext = computed(() => this.currentPage() + 1 < this.totalPages());
   readonly showNoDepartmentsWarning = computed(() => this.formVisible() && !this.loadingDepartamentos() && this.departamentos().length === 0);
@@ -62,12 +82,23 @@ export class AdminEmpleadosComponent {
     return byId;
   });
 
-  private readonly pageSize = 10;
+  private readonly pageSize = 5;
   private readonly defaultSort = 'nombre,asc';
+  private readonly reloadDelayMs = 300;
+  private loadRequestId = 0;
+  private delayedReloadHandle: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
-    this.loadPage(0);
+    const initialPage = this.parsePageParam(this.route.snapshot.queryParamMap.get('page'));
+    this.currentPage.set(initialPage);
+    this.syncPageQueryParam(initialPage);
+    this.loadPage(initialPage);
     this.loadDepartamentos();
+  }
+
+  ngOnDestroy(): void {
+    this.clearDelayedReload();
+    this.loadRequestId++;
   }
 
   logout(): void {
@@ -75,7 +106,12 @@ export class AdminEmpleadosComponent {
   }
 
   retry(): void {
+    this.clearDelayedReload();
     this.loadPage(this.currentPage());
+  }
+
+  setSearch(term: string): void {
+    this.searchTerm.set(term);
   }
 
   previousPage(): void {
@@ -125,7 +161,10 @@ export class AdminEmpleadosComponent {
           this.showToast('Empleado creado exitosamente.', 'success');
           this.submitting.set(false);
           this.formVisible.set(false);
-          this.loadPage(this.currentPage());
+          this.currentPage.set(0);
+          this.totalPages.set(0);
+          this.totalElements.set(0);
+          this.scheduleReloadPage(0);
         },
         error: (error) => this.handleFormError(error)
       });
@@ -144,7 +183,7 @@ export class AdminEmpleadosComponent {
         this.showToast('Empleado actualizado exitosamente.', 'success');
         this.submitting.set(false);
         this.formVisible.set(false);
-        this.loadPage(this.currentPage());
+        this.scheduleReloadPage(this.currentPage());
       },
       error: (error) => this.handleFormError(error)
     });
@@ -230,15 +269,39 @@ export class AdminEmpleadosComponent {
     return empleadoEmail !== sessionEmail;
   }
 
-  private loadPage(page: number): void {
+  private loadPage(page: number | undefined): void {
+    const safePage = this.normalizePage(page);
+    const requestId = ++this.loadRequestId;
+
     this.status.set('loading');
     this.errorMessage.set('');
+    this.empleados.set([]);
+    this.syncPageQueryParam(safePage);
 
-    this.empleadoService.list(page, this.pageSize, this.defaultSort).subscribe({
+    this.empleadoService.list(safePage, this.pageSize, this.defaultSort).subscribe({
       next: (response) => {
-        this.currentPage.set(response.number);
-        this.totalPages.set(response.totalPages);
-        this.totalElements.set(response.totalElements);
+        if (requestId !== this.loadRequestId) {
+          return;
+        }
+
+        const pageFromResponse = (response as { number?: number | null; page?: { number?: number | null } }).number
+          ?? (response as { page?: { number?: number | null } }).page?.number
+          ?? safePage;
+        const totalPagesFromResponse = (response as { totalPages?: number | null; page?: { totalPages?: number | null } }).totalPages
+          ?? (response as { page?: { totalPages?: number | null } }).page?.totalPages
+          ?? 0;
+        const totalElementsFromResponse = (response as { totalElements?: number | null; page?: { totalElements?: number | null } }).totalElements
+          ?? (response as { page?: { totalElements?: number | null } }).page?.totalElements
+          ?? 0;
+
+        const resolvedPage = this.normalizePage(pageFromResponse);
+        const resolvedTotalPages = Math.max(0, Math.floor(totalPagesFromResponse));
+        const resolvedTotalElements = Math.max(0, Math.floor(totalElementsFromResponse));
+
+        this.currentPage.set(resolvedPage);
+        this.totalPages.set(resolvedTotalPages);
+        this.totalElements.set(resolvedTotalElements);
+        this.syncPageQueryParam(resolvedPage);
 
         if (!response.content.length) {
           this.empleados.set([]);
@@ -254,10 +317,59 @@ export class AdminEmpleadosComponent {
         }
       },
       error: () => {
+        if (requestId !== this.loadRequestId) {
+          return;
+        }
+
+        this.empleados.set([]);
         this.status.set('error');
         this.errorMessage.set('No pudimos cargar empleados. Intenta nuevamente.');
       }
     });
+  }
+
+  private scheduleReloadPage(page: number): void {
+    this.clearDelayedReload();
+    const pageToReload = this.normalizePage(page);
+
+    this.delayedReloadHandle = setTimeout(() => {
+      this.delayedReloadHandle = null;
+      this.loadPage(pageToReload);
+    }, this.reloadDelayMs);
+  }
+
+  private normalizePage(page: number | undefined): number {
+    if (typeof page !== 'number' || Number.isNaN(page) || page < 0) {
+      return 0;
+    }
+
+    return Math.floor(page);
+  }
+
+  private parsePageParam(rawPage: string | null): number {
+    if (!rawPage) {
+      return 0;
+    }
+
+    const parsed = Number(rawPage);
+    return this.normalizePage(parsed);
+  }
+
+  private syncPageQueryParam(page: number): void {
+    const currentQueryParams = { ...this.route.snapshot.queryParams, page: String(page) };
+    const urlTree = this.router.createUrlTree([], {
+      relativeTo: this.route,
+      queryParams: currentQueryParams
+    });
+
+    this.location.replaceState(this.router.serializeUrl(urlTree));
+  }
+
+  private clearDelayedReload(): void {
+    if (this.delayedReloadHandle !== null) {
+      clearTimeout(this.delayedReloadHandle);
+      this.delayedReloadHandle = null;
+    }
   }
 
   private loadDepartamentos(): void {
