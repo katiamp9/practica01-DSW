@@ -99,7 +99,7 @@
 
       <div class="pagination-controls">
         <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" [disabled]="!hasPrevious()" (click)="previousPage()">Anterior</button>
-        <span>Página {{ currentPage() + 1 }} de {{ totalPages() || 1 }}</span>
+        <span>Página {{ (currentPage() || 0) + 1 }} de {{ totalPages() || 1 }}</span>
         <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Siguiente</button>
       </div>
     </div>

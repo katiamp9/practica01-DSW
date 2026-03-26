@@ -13,7 +13,7 @@ export class DepartamentoService {
   private readonly httpClient = inject(HttpClient);
   private readonly departamentosEndpoint = `${environment.apiBasePath}/departamentos`;
 
-  list(page: number, size = 10, sort = 'nombre,asc'): Observable<PageResponse<DepartamentoGestion>> {
+  list(page: number, size = 5, sort = 'nombre,asc'): Observable<PageResponse<DepartamentoGestion>> {
     return this.httpClient.get<PageResponse<DepartamentoGestion>>(this.departamentosEndpoint, {
       params: this.pageParams(page, size, sort)
     });
@@ -32,8 +32,10 @@ export class DepartamentoService {
   }
 
   private pageParams(page: number, size: number, sort: string): HttpParams {
+    const safePage = Number.isFinite(page) && page >= 0 ? Math.floor(page) : 0;
+
     return new HttpParams()
-      .set('page', String(page))
+      .set('page', String(safePage))
       .set('size', String(size))
       .set('sort', sort);
   }

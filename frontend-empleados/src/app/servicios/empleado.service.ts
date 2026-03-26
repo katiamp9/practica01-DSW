@@ -15,9 +15,11 @@ export class EmpleadoService {
   private readonly empleadosEndpoint = `${environment.apiBasePath}/empleados`;
   private readonly departamentosEndpoint = `${environment.apiBasePath}/departamentos`;
 
-  list(page: number, size = 10, sort = 'nombre,asc'): Observable<PageResponse<EmpleadoGestion>> {
+  list(page: number, size = 10, sort = 'clave,asc'): Observable<PageResponse<EmpleadoGestion>> {
+    const enforcedSort = 'clave,asc';
+
     return this.httpClient.get<PageResponse<EmpleadoGestion>>(this.empleadosEndpoint, {
-      params: this.pageParams(page, size, sort)
+      params: this.pageParams(page, size, enforcedSort)
     });
   }
 
@@ -40,8 +42,10 @@ export class EmpleadoService {
   }
 
   private pageParams(page: number, size: number, sort: string): HttpParams {
+    const safePage = Number.isFinite(page) && page >= 0 ? Math.floor(page) : 0;
+
     return new HttpParams()
-      .set('page', String(page))
+      .set('page', String(safePage))
       .set('size', String(size))
       .set('sort', sort);
   }

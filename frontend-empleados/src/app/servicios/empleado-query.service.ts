@@ -19,8 +19,10 @@ export class EmpleadoQueryService {
   }
 
   private buildParams(page: number, size: number, sort: string): HttpParams {
+    const safePage = Number.isFinite(page) && page >= 0 ? Math.floor(page) : 0;
+
     return new HttpParams()
-      .set('page', String(page))
+      .set('page', String(safePage))
       .set('size', String(size))
       .set('sort', sort);
   }

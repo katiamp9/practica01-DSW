@@ -36,7 +36,25 @@
       <button type="button" class="btn btn-primary gh-btn gh-btn-primary" (click)="retry()">Reintentar</button>
     </div>
 
-    <div class="table-wrapper" *ngIf="status() === 'data'">
+    <div class="toolbar" *ngIf="status() === 'data'">
+      <label class="search-field" for="dashboard-empleado-search">
+        <span>Buscar por nombre o clave</span>
+        <input
+          id="dashboard-empleado-search"
+          type="text"
+          [value]="searchTerm()"
+          (input)="setSearch($any($event.target).value)"
+          placeholder="Ej. EMP-1001 o Ana"
+        />
+      </label>
+      <p class="search-note" *ngIf="hasSearch()">Filtrando resultados en la página actual.</p>
+    </div>
+
+    <div class="state-block empty" *ngIf="status() === 'data' && filteredEmpleados().length === 0">
+      <p>No hay resultados para el filtro actual en esta página.</p>
+    </div>
+
+    <div class="table-wrapper" *ngIf="status() === 'data' && filteredEmpleados().length > 0">
       <table class="gh-table">
         <thead>
           <tr>
@@ -46,7 +64,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let empleado of empleados(); trackBy: trackByClave">
+          <tr *ngFor="let empleado of filteredEmpleados(); trackBy: trackByClave">
             <td>{{ empleado.nombre }}</td>
             <td>{{ empleado.clave }}</td>
             <td>
@@ -58,9 +76,9 @@
         </tbody>
       </table>
 
-      <div class="pagination-controls">
+      <div class="pagination-controls" *ngIf="!hasSearch()">
         <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" [disabled]="!hasPrevious()" (click)="previousPage()">Anterior</button>
-        <span>Página {{ currentPage() + 1 }} de {{ totalPages() || 1 }}</span>
+        <span>Página {{ (currentPage() || 0) + 1 }} de {{ totalPages() || 1 }}</span>
         <button type="button" class="btn btn-ghost gh-btn gh-btn-secondary" [disabled]="!hasNext()" (click)="nextPage()">Siguiente</button>
       </div>
     </div>
