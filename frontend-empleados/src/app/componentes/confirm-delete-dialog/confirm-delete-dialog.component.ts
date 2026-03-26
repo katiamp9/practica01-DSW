@@ -11,6 +11,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ConfirmDeleteDialogComponent {
   @Input({ required: true }) visible = false;
   @Input() empleadoNombre = '';
+  @Input() itemLabel = 'empleado';
 
   @Output() confirmed = new EventEmitter<void>();
   @Output() canceled = new EventEmitter<void>();
