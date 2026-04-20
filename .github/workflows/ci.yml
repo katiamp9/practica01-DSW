@@ -4,13 +4,17 @@ on:
   push:
     branches: [master, develop]
     paths:
-      - 'frontend/**'
-      - 'backend/**'
+      - 'frontend-empleados/**'
+      - 'src/**'
+      - 'pom.xml'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: [master, develop]
     paths:
-      - 'frontend/**'
-      - 'backend/**'
+      - 'frontend-empleados/**'
+      - 'src/**'
+      - 'pom.xml'
+      - '.github/workflows/ci.yml'
 
 jobs:
   test-frontend:
