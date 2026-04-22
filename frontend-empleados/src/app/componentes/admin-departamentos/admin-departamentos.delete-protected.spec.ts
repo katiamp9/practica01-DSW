@@ -42,7 +42,6 @@ describe('AdminDepartamentosComponent protected delete', () => {
 
     fixture = TestBed.createComponent(AdminDepartamentosComponent);
     component = fixture.componentInstance;
-    spyOn(window, 'confirm').and.returnValue(true);
     fixture.detectChanges();
   });
 
@@ -52,6 +51,7 @@ describe('AdminDepartamentosComponent protected delete', () => {
     );
 
     component.deleteDepartamento({ id: 1, nombre: 'Sistemas', totalEmpleados: 0 });
+    component.confirmDelete();
     tick();
 
     expect(component.toastMessage()).toBe('No se puede eliminar: existen empleados asociados.');

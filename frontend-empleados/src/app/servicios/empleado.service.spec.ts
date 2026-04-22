@@ -37,7 +37,7 @@ describe('EmpleadoService', () => {
       && req.url === '/api/v1/empleados'
       && req.params.get('page') === '0'
       && req.params.get('size') === '10'
-      && req.params.get('sort') === 'nombre,asc'
+      && req.params.get('sort') === 'clave,asc'
     );
 
     request.flush({
