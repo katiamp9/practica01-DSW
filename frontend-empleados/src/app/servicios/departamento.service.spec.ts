@@ -36,7 +36,7 @@ describe('DepartamentoService', () => {
   });
 
   it('should request departamentos list with pageable params', () => {
-    service.list(0, 10, 'nombre,asc').subscribe((response) => {
+    service.list(0).subscribe((response) => {
       expect(response.content.length).toBe(1);
     });
 
@@ -44,14 +44,14 @@ describe('DepartamentoService', () => {
       req.method === 'GET'
       && req.url === '/api/v1/departamentos'
       && req.params.get('page') === '0'
-      && req.params.get('size') === '10'
+      && req.params.get('size') === '5'
       && req.params.get('sort') === 'nombre,asc'
     );
 
     request.flush({
       content: [{ id: 1, nombre: 'Sistemas', totalEmpleados: 3 }],
       number: 0,
-      size: 10,
+      size: 5,
       totalElements: 1,
       totalPages: 1,
       first: true,
@@ -84,13 +84,13 @@ describe('DepartamentoService', () => {
   it('should include basic authorization header for protected departamentos requests', () => {
     service.list(0).subscribe();
 
-    const request = httpMock.expectOne('/api/v1/departamentos?page=0&size=10&sort=nombre,asc');
+    const request = httpMock.expectOne('/api/v1/departamentos?page=0&size=5&sort=nombre,asc');
     expect(request.request.headers.get('Authorization')).toBe('Basic admin-token');
 
     request.flush({
       content: [],
       number: 0,
-      size: 10,
+      size: 5,
       totalElements: 0,
       totalPages: 0,
       first: true,

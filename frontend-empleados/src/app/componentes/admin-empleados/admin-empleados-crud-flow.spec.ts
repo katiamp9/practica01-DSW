@@ -3,6 +3,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { fakeAsync, tick } from '@angular/core/testing';
 
 import { AdminEmpleadosComponent } from './admin-empleados.component';
 import { AuthService } from '../../servicios/auth.service';
@@ -74,7 +75,7 @@ describe('AdminEmpleadosComponent CRUD flow', () => {
     });
   });
 
-  it('should execute create flow and show success toast', () => {
+  it('should execute create flow and show success toast', fakeAsync(() => {
     const fixture = TestBed.createComponent(AdminEmpleadosComponent);
     fixture.detectChanges();
 
@@ -93,8 +94,9 @@ describe('AdminEmpleadosComponent CRUD flow', () => {
     const payload = empleadoServiceMock.create.calls.mostRecent().args[0];
     expect('clave' in payload).toBeFalse();
     expect(component.toastMessage()).toContain('creado');
+    tick(350);
     expect(empleadoServiceMock.list.calls.count()).toBeGreaterThan(initialListCalls);
-  });
+  }));
 
   it('should execute update flow using empleado clave and payload with departamentoId', () => {
     const fixture = TestBed.createComponent(AdminEmpleadosComponent);
