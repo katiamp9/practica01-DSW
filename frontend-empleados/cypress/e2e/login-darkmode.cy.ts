@@ -1,7 +1,21 @@
-describe('Login base', () => {
-  it('renderiza login y mantiene palette de modo oscuro GitHub', () => {
+describe('Login E2E', () => {
+  it('debe autenticar y redirigir al dashboard', () => {
+    cy.intercept('POST', '**/api/v1/auth/login', {
+      statusCode: 200,
+      body: {
+        rol: 'ROLE_ADMIN',
+        nombre: 'Administrador'
+      }
+    }).as('loginRequest');
+
     cy.visit('/login');
-    cy.contains('Iniciar sesión').should('be.visible');
-    cy.get('body').should('have.css', 'background-color', 'rgb(13, 17, 23)');
+
+    cy.get('#email').should('be.visible').clear().type('admin@empresa.com');
+    cy.get('#password').should('be.visible').clear().type('admin123');
+
+    cy.contains('button[type="submit"]', /Ingresar|Iniciar Sesión/i).click();
+
+    cy.wait('@loginRequest');
+    cy.url().should('include', '/admin-dashboard');
   });
 });
