@@ -22,8 +22,8 @@ public class EmpleadoUserDetailsService implements UserDetailsService {
 
     public EmpleadoUserDetailsService(
         CuentaEmpleadoRepository cuentaEmpleadoRepository,
-        @Value("${SPRING_SECURITY_USER_NAME:admin}") String adminUsername,
-        @Value("${SPRING_SECURITY_USER_PASSWORD_HASH:$2y$10$rDLkWjFUlUkWr9GIiK42OOLVqlFM1eBhAmDNxf4VTAQmV.p.JWO5i}") String adminPasswordHash
+        @Value("${SPRING_SECURITY_USER_NAME}") String adminUsername,
+        @Value("${SPRING_SECURITY_USER_PASSWORD_HASH}") String adminPasswordHash
     ) {
         this.cuentaEmpleadoRepository = cuentaEmpleadoRepository;
         this.adminUsername = adminUsername;
