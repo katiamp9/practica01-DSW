@@ -53,8 +53,8 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider(
         ObjectProvider<EmpleadoUserDetailsService> empleadoUserDetailsServiceProvider,
         PasswordEncoder passwordEncoder,
-        @Value("${SPRING_SECURITY_USER_NAME:admin}") String username,
-        @Value("${SPRING_SECURITY_USER_PASSWORD_HASH:$2y$10$rDLkWjFUlUkWr9GIiK42OOLVqlFM1eBhAmDNxf4VTAQmV.p.JWO5i}") String passwordHash
+        @Value("${SPRING_SECURITY_USER_NAME}") String username,
+        @Value("${SPRING_SECURITY_USER_PASSWORD_HASH}") String passwordHash
     ) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 
