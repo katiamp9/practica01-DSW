@@ -50,6 +50,19 @@ jobs:
         working-directory: ./frontend-empleados
         run: npm test -- --watch=false --no-progress --browsers=ChromeHeadless
 
+      - name: Ejecutar Cypress login E2E
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frontend-empleados
+          install: false
+          start: npm start -- --host 0.0.0.0 --port 4200
+          wait-on: 'http://localhost:4200/login'
+          wait-on-timeout: 120
+          browser: chrome
+          spec: cypress/e2e/login-darkmode.cy.ts
+        env:
+          CYPRESS_baseUrl: http://localhost:4200
+
   test-backend:
     name: Test Backend
     runs-on: ubuntu-latest
