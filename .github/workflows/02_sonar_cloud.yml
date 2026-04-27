@@ -1,8 +1,11 @@
 name: SonarCloud Analysis
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - master
+      - develop
+      - release
 
 permissions:
   contents: read
